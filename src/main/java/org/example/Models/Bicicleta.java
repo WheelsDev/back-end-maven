@@ -4,35 +4,16 @@ import java.util.Random;
 
 public class Bicicleta {
 
-    protected int numeroBicicleta;
-    protected String nome;
-    protected String marca;
-    protected String modelo;
-    protected double deposito = 0;
-    protected String tipo;
-    protected double diariaTaxaAluguel = 0;
-    protected boolean disponibilidade = true;
+    private String nome;
+    private String marca;
+    private String modelo;
+    private double deposito = 0;
+    private String tipo;
+    private double diariaTaxaAluguel = 0;
+    private boolean disponibilidade = true;
 
-    //    static{
-//        int j = 0;
-//        for(int i = 10; i < 15; i++){
-//            Bicicleta b = new Bicicleta("Bicicleta anos 2000",i, i, (j*100));
-//            bicicletaLista[j] = b;
-//            j++;
-//        }
-//    }
-    public Bicicleta(String nome, double deposito, double diariaTaxaAluguel, String marca, String modelo, String tipo) {
-        this.numeroBicicleta = new Random().nextInt(1,10000);
-        this.nome = nome;
-        this.deposito = deposito;
-        this.diariaTaxaAluguel = diariaTaxaAluguel;
-        this.marca = marca;
-        this.modelo = modelo;
-        this.tipo =  tipo;
-    }
 
-    public Bicicleta(int numeroBicicleta, String nome, String marca, String modelo,double deposito, String tipo,double diariaTaxaAluguel , boolean disponibilidade) {
-        this.numeroBicicleta = numeroBicicleta;
+    public Bicicleta(String nome, String marca, String modelo,double deposito, String tipo,double diariaTaxaAluguel , boolean disponibilidade) {
         this.nome = nome;
         this.deposito = deposito;
         this.diariaTaxaAluguel = diariaTaxaAluguel;
@@ -40,10 +21,6 @@ public class Bicicleta {
         this.modelo = modelo;
         this.tipo =  tipo;
         this.disponibilidade = disponibilidade;
-    }
-
-    public int getNumeroBicicleta() {
-        return numeroBicicleta;
     }
 
     public String getNome() {
@@ -75,7 +52,6 @@ public class Bicicleta {
     }
 
     public void exibirDetalhes() {
-        System.out.println("Identificador da Bicicleta: " + numeroBicicleta);
         System.out.println("Nome: " + nome);
         System.out.println("Marca: " + marca);
         System.out.println("Modelo: " + modelo);
@@ -90,21 +66,4 @@ public class Bicicleta {
         System.out.println("O total custo para o alguel deve ser: R$ " + custo + "\n");
     }
 
-    @Override
-    public String toString() {
-        return "\n"+numeroBicicleta+","+nome+","+marca+","+modelo+","+deposito+","+tipo+","+diariaTaxaAluguel+","+disponibilidade;
-    }
-
-//    public static Bicicleta encontrarBicicletaPeloNumero(int numeroDaBicicleta){
-//        int numeroBicicleta = bicicletaLista.length;
-//
-//        for(int i = 0; i < numeroBicicleta; i++){
-//            if(bicicletaLista[i].getNumeroBicicleta() == numeroDaBicicleta){
-//                System.out.println("Bicicleta com o número '" + numeroDaBicicleta + "' encontrada" + "\n");
-//                return bicicletaLista[i];
-//            }
-//        }
-//        System.out.println("Bicicleta com o número '" + numeroDaBicicleta + "' não encontrada" + "\n");
-//        return null;
-//    }
 }

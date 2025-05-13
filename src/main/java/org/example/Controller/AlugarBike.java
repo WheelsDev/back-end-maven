@@ -3,6 +3,7 @@ package org.example.Controller;
 import org.example.Models.Contrato;
 
 public class AlugarBike {
+
     private Contrato contrato = null;
 
     public void exibirDetalhesBicicleta(){
