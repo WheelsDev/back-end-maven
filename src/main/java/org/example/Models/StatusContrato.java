@@ -1,4 +1,4 @@
-package org.example;
+package org.example.Models;
 
 public enum StatusContrato {
     ATIVO,FINALIZADO;

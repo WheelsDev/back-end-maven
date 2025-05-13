@@ -1,4 +1,6 @@
-package org.example;
+package org.example.Controller;
+
+import org.example.Models.Contrato;
 
 public class AlugarBike {
     private Contrato contrato = null;
