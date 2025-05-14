@@ -9,6 +9,7 @@ public class Contrato {
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     Scanner leitor = new Scanner(System.in);
+    private String identificador;
     private Cliente cliente = null;
     private Bicicleta bicicleta = null;
     private LocalDate dataInicial = null;
@@ -19,6 +20,7 @@ public class Contrato {
     private StatusContrato status;
 
     public Contrato(Cliente cliente, Bicicleta bicicleta, LocalDate dataParaAlugar, int numDiasParaAlugar){
+        identificador = gerarIdentificador();
         this.cliente = cliente;
         this.bicicleta = bicicleta;
         dataInicial = dataParaAlugar;
@@ -59,6 +61,14 @@ public class Contrato {
         return dataInicial;
     }
 
+    public String getIdentificador() {
+        return identificador;
+    }
+
+    private String gerarIdentificador() {
+        return "CON-" + new Random().nextInt(10000);
+    }
+
     public void danoCausadoABicicleta() {
         System.out.println("Dano causado à bicicleta.");
         double desconto = bicicleta.getDeposito()*15;
@@ -68,7 +78,7 @@ public class Contrato {
     public void atrasoAoDevolverBicicleta() {
         System.out.println("Dias alugados após os dias de contrato: ");
         int dias = leitor.nextInt();
-        double desconto = 1.20 * (bicicleta.getdiariaTaxaAluguel() * dias);
+        double desconto = 1.20 * (bicicleta.getDiariaTaxaAluguel() * dias);
         taxaAtraso = desconto;
     }
 
@@ -77,6 +87,8 @@ public class Contrato {
     }
 
     public void exibirDetalhes() {
+        System.out.println("DETALHES DO CONTRATO");
+        System.out.println("\nIdentificador: " + getIdentificador());
         System.out.println("Cliente: " + cliente.getNome());
         System.out.println("Bicicleta: " + bicicleta.getNome());
         System.out.println("Data do aluguel: " + dataInicial);

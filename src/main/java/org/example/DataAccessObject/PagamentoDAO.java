@@ -1,8 +1,9 @@
 package org.example.DataAccessObject;
 
+import org.example.Models.Pagamento;
 import org.example.Util.GerenciadorBancoDados;
-
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -24,6 +25,27 @@ public class PagamentoDAO {
                     ")");
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void inserir(Pagamento pagamento) {
+        String sql = "INSERT INTO pagamentos (contrato_id, cliente, valor_total, valor_pago, " +
+                "data_pagamento, valor_em_aberto, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = GerenciadorBancoDados.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, pagamento.getContrato().getIdentificador());
+            pstmt.setString(2, pagamento.getContrato().getCliente().getNome());
+            pstmt.setDouble(3, pagamento.getValorTotal());
+            pstmt.setDouble(4, pagamento.getValorPago());
+            pstmt.setString(5, pagamento.getDataPagamento().toString());
+            pstmt.setDouble(6, pagamento.getPagamentoEmFalta());
+            pstmt.setString(7, pagamento.getStatus().toString());
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao inserir pagamento " + e.getMessage());
         }
     }
 }

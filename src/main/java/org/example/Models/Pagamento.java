@@ -13,9 +13,57 @@ public class Pagamento {
     private double pagamentoEmFalta = 0;
     private StatusPagamento status;
 
+    public Contrato getContrato() {
+        return contrato;
+    }
+
+    public void setContrato(Contrato contrato) {
+        this.contrato = contrato;
+    }
+
+    public double getValorTotal() {
+        return valorTotal;
+    }
+
+    public void setValorTotal(double valorTotal) {
+        this.valorTotal = valorTotal;
+    }
+
+    public double getValorPago() {
+        return valorPago;
+    }
+
+    public void setValorPago(double valorPago) {
+        this.valorPago = valorPago;
+    }
+
+    public LocalDate getDataPagamento() {
+        return dataPagamento;
+    }
+
+    public void setDataPagamento(LocalDate dataPagamento) {
+        this.dataPagamento = dataPagamento;
+    }
+
+    public double getPagamentoEmFalta() {
+        return pagamentoEmFalta;
+    }
+
+    public void setPagamentoEmFalta(double pagamentoEmFalta) {
+        this.pagamentoEmFalta = pagamentoEmFalta;
+    }
+
+    public StatusPagamento getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusPagamento status) {
+        this.status = status;
+    }
+
     public Pagamento(Contrato contrato){
         this.contrato = contrato;
-        this.valorTotal = contrato.getNumeroDias() * contrato.getBicicleta().getdiariaTaxaAluguel() + contrato.getBicicleta().getDeposito();
+        this.valorTotal = contrato.getNumeroDias() * contrato.getBicicleta().getDiariaTaxaAluguel() + contrato.getBicicleta().getDeposito();
         this.valorPago = pagarAluguel();
         this.pagamentoEmFalta = valorTotal - valorPago;
         this.dataPagamento = LocalDate.now();
@@ -34,9 +82,9 @@ public class Pagamento {
 
     private void emitirRecibo(Contrato contrato){
 
-        String client = contrato.getCliente().getNome();
+        String cliente = contrato.getCliente().getNome();
         String endereco = contrato.getCliente().getEndereco();
-        System.out.println("Imprimindo comprovante para: '" + client + "' ......");
+        System.out.println("Imprimindo comprovante para: '" + cliente + "' ......");
         System.out.println("Endereço: " + endereco + "\n");
 
         System.out.println("Alugando a bicicleta: '" + contrato.getBicicleta().getNome() + "' para " + contrato.getNumeroDias() + " dias" + "\n");

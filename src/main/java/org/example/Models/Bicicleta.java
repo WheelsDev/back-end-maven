@@ -43,7 +43,7 @@ public class Bicicleta {
         return tipo;
     }
 
-    public double getdiariaTaxaAluguel() {
+    public double getDiariaTaxaAluguel() {
         return diariaTaxaAluguel;
     }
 
