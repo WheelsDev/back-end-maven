@@ -19,6 +19,8 @@ public class Contrato {
     private double taxaDano = 0;
     private StatusContrato status;
 
+    public Contrato() {}
+
     public Contrato(Cliente cliente, Bicicleta bicicleta, LocalDate dataParaAlugar, int numDiasParaAlugar){
         identificador = gerarIdentificador();
         this.cliente = cliente;
@@ -27,6 +29,46 @@ public class Contrato {
         numeroDias = numDiasParaAlugar;
         dataRetorno = dataParaAlugar.plusDays(numDiasParaAlugar);
         status = StatusContrato.ATIVO;
+    }
+
+    public void setLeitor(Scanner leitor) {
+        this.leitor = leitor;
+    }
+
+    public void setIdentificador(String identificador) {
+        this.identificador = identificador;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+
+    public void setBicicleta(Bicicleta bicicleta) {
+        this.bicicleta = bicicleta;
+    }
+
+    public void setDataInicial(LocalDate dataInicial) {
+        this.dataInicial = dataInicial;
+    }
+
+    public void setNumeroDias(int numeroDias) {
+        this.numeroDias = numeroDias;
+    }
+
+    public void setDataRetorno(LocalDate dataRetorno) {
+        this.dataRetorno = dataRetorno;
+    }
+
+    public void setTaxaAtraso(double taxaAtraso) {
+        this.taxaAtraso = taxaAtraso;
+    }
+
+    public void setTaxaDano(double taxaDano) {
+        this.taxaDano = taxaDano;
+    }
+
+    public void setStatus(StatusContrato status) {
+        this.status = status;
     }
 
     public Cliente getCliente() {

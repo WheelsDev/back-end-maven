@@ -12,6 +12,24 @@ public class Pagamento {
     private LocalDate dataPagamento = LocalDate.now();
     private double pagamentoEmFalta = 0;
     private StatusPagamento status;
+    private String contratoId;
+    private String clienteNome; // apenas para listar pagamentos
+
+    public String getContratoId() {
+        return contratoId;
+    }
+
+    public void setContratoId(String contratoId) {
+        this.contratoId = contratoId;
+    }
+
+    public String getClienteNome() {
+        return clienteNome;
+    }
+
+    public void setClienteNome(String clienteNome) {
+        this.clienteNome = clienteNome;
+    }
 
     public Contrato getContrato() {
         return contrato;
@@ -61,6 +79,8 @@ public class Pagamento {
         this.status = status;
     }
 
+    public Pagamento() {}
+
     public Pagamento(Contrato contrato){
         this.contrato = contrato;
         this.valorTotal = contrato.getNumeroDias() * contrato.getBicicleta().getDiariaTaxaAluguel() + contrato.getBicicleta().getDeposito();
@@ -72,7 +92,6 @@ public class Pagamento {
 
     private double pagarAluguel() {
         System.out.print("Coloque o valor do pagamento: ");
-//        Scanner leitor = new Scanner(System.in);
         return 100;
     }
 

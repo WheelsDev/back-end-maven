@@ -40,7 +40,6 @@ public class UsuarioDAO {
         }
     }
 
-
     public Usuario autenticarUsuario(String email, String senha) {
         String sql = "SELECT * FROM usuarios WHERE LOWER(email) = LOWER(?) AND senha = ?";
         try (Connection conn = GerenciadorBancoDados.conectar();
