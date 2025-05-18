@@ -3,6 +3,7 @@ package org.example.Controller;
 import org.example.DataAccessObject.UsuarioDAO;
 import org.example.Models.*;
 import org.example.Util.GerarContratoPDF;
+import org.example.Util.GerarEmail;
 
 import java.time.LocalDate;
 
@@ -22,6 +23,8 @@ public class Main {
         Bicicleta novaBicicleta = new Bicicleta("Bicicleta Anos 2000","Volkswagem","Grande",15,"Esportiva",5,true);
         Contrato novoContrato = new Contrato(novoCliente,novaBicicleta, LocalDate.now(),10);
         GerarContratoPDF contratoPDF = new GerarContratoPDF();
+        GerarEmail email = new GerarEmail();
         contratoPDF.criarPDF(novoContrato,"C:\\Users\\Usuario\\Documents\\GitHub\\back-end-maven\\src\\main\\java\\org\\example\\Util\\"+ novoContrato.getIdentificador() + ".pdf");
+        email.enviarContratoDeAluguel(novoCliente);
     }
 }
