@@ -48,7 +48,7 @@ public class GerarEmail {
                 "Wheels LTDA\n" +
                 "Brasil - Rio de Janeiro - Centro\n" +
                 "+55 (21) 99822-8014\n" +
-                "@wheelsltda@gmail.com\n" +
+                "wheelsltda@gmail.com\n" +
                 "\n";
 
         Session session = Session.getInstance(propriedadesEmail(), new Authenticator() {
@@ -62,9 +62,12 @@ public class GerarEmail {
             mensagem.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destinatario));
             mensagem.setSubject(assunto);
             mensagem.setText(corpo);
+            Multipart multipart = new MimeMultipart();
+            MimeBodyPart corpoTexto = new MimeBodyPart();
+            corpoTexto.setText(corpo);
+            multipart.addBodyPart(corpoTexto);
             MimeBodyPart anexo = new MimeBodyPart();
             anexo.attachFile(caminhoArquivo.toFile());
-            Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(anexo);
             mensagem.setContent(multipart);
             Transport.send(mensagem);

@@ -4,6 +4,7 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.draw.LineSeparator;
 import org.example.Models.Contrato;
 import java.io.FileOutputStream;
 import java.nio.file.Path;
@@ -19,63 +20,120 @@ public class GerarContratoPDF {
             PdfWriter.getInstance(document, new FileOutputStream(caminhoArquivo.toFile()));
             document.open();
 
-            PdfPTable header = new PdfPTable(3);
-            header.setWidthPercentage(100);
-            header.setWidths(new int[]{1, 1, 1});
+            PdfPTable headerTable = new PdfPTable(3);
+            headerTable.setWidthPercentage(100);
+            headerTable.setWidths(new float[]{15, 70, 15});
+
+            PdfPCell logoCell = new PdfPCell();
+            logoCell.setBorder(Rectangle.NO_BORDER);
+            logoCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 
             String arquivoImagem = "LogoWheels.png";
             Path caminhoImagem = Paths.get("src","main","java","org","example","Resources",arquivoImagem);
             Image logoLoja = Image.getInstance(caminhoImagem.toString());
-            logoLoja.scaleToFit(80, 80);
-            PdfPCell cellLogoLoja = new PdfPCell(logoLoja);
-            cellLogoLoja.setBorder(Rectangle.NO_BORDER);
-            cellLogoLoja.setHorizontalAlignment(Element.ALIGN_LEFT);
+            logoLoja.scaleToFit(60, 60);
 
-            Image logoEstado = Image.getInstance("C:\\Users\\Usuario\\Documents\\GitHub\\back-end-maven\\src\\main\\java\\org\\example\\Resources\\GovernoRioDeJaneiro.png");
-            logoEstado.scaleToFit(80, 80);
-            PdfPCell cellLogoEstado = new PdfPCell(logoEstado);
-            cellLogoEstado.setBorder(Rectangle.NO_BORDER);
-            cellLogoEstado.setHorizontalAlignment(Element.ALIGN_CENTER);
+            logoCell.addElement(new Chunk(logoLoja, 0, 0, true));
 
-            Image logoPrefeitura = Image.getInstance("C:\\Users\\Usuario\\Documents\\GitHub\\back-end-maven\\src\\main\\java\\org\\example\\Resources\\PrefeituraRioDeJaneiro.png");
-            logoPrefeitura.scaleToFit(80, 80);
-            PdfPCell cellLogoPrefeitura = new PdfPCell(logoPrefeitura);
-            cellLogoPrefeitura.setBorder(Rectangle.NO_BORDER);
-            cellLogoPrefeitura.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            // Célula do meio com título centralizado
+            PdfPCell titleCell = new PdfPCell();
+            titleCell.setBorder(Rectangle.NO_BORDER);
+            titleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 
-            header.addCell(cellLogoLoja);
-            header.addCell(cellLogoEstado);
-            header.addCell(cellLogoPrefeitura);
-
-            document.add(header);
-
-            Font tituloFonte = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD);
+            Font tituloFonte = new Font(Font.FontFamily.HELVETICA, 16,Font.BOLD);
             Paragraph titulo = new Paragraph("CONTRATO DE ALUGUEL DA BICICLETA", tituloFonte);
             titulo.setAlignment(Element.ALIGN_CENTER);
-            titulo.setSpacingBefore(20);
-            titulo.setSpacingAfter(20);
-            document.add(titulo);
 
+            titleCell.addElement(titulo);
+
+            PdfPCell emptyCell = new PdfPCell();
+            emptyCell.setBorder(Rectangle.NO_BORDER);
+
+            headerTable.addCell(logoCell);
+            headerTable.addCell(titleCell);
+            headerTable.addCell(emptyCell);
+
+            document.add(headerTable);
+
+            PdfPTable mainTable = new PdfPTable(2);
+            mainTable.setWidthPercentage(100);
+            mainTable.setWidths(new float[]{60, 40});
+            mainTable.setSpacingBefore(30);
+
+            PdfPCell dataCell = new PdfPCell();
+            dataCell.setBorder(Rectangle.NO_BORDER);
+
+            Font fonteNegrito = new Font(Font.FontFamily.HELVETICA, 14,Font.BOLD);
             Font fonteNormal = new Font(Font.FontFamily.HELVETICA, 12);
 
-            Paragraph dadosCliente = new Paragraph("CONTRATANTE:\n\n" +
+            Paragraph tituloCliente = new Paragraph(
+                    "CONTRATANTE:\n\n", fonteNegrito);
+            Paragraph dadosCliente = new Paragraph(
                     "Nome: " + contrato.getCliente().getNome() + "\n" +
                     "E-mail: " + contrato.getCliente().getEmail() + "\n" +
                     "Endereço: " + contrato.getCliente().getEndereco() + "\n" +
                     "Telefone: " + contrato.getCliente().getTelefone() + "\n\n", fonteNormal);
-            document.add(dadosCliente);
 
+            Paragraph tituloBike = new Paragraph(
+                    "BICICLETA ALUGADA:\n\n", fonteNegrito);
             Paragraph dadosBike = new Paragraph(
-                    "BICICLETA ALUGADA:\n\n" +
-                            "Nome: " + contrato.getBicicleta().getNome() + "\n" +
+                      "Nome: " + contrato.getBicicleta().getNome() + "\n" +
                             "Número: " + contrato.getBicicleta().getNumero() + "\n" +
                             "Modelo: " + contrato.getBicicleta().getModelo() + "\n" +
                             "Marca: " + contrato.getBicicleta().getMarca() + "\n" +
                             "Tipo: " + contrato.getBicicleta().getTipo() + "\n\n", fonteNormal);
-            document.add(dadosBike);
 
+            dataCell.addElement(tituloCliente);
+            dataCell.addElement(dadosCliente);
+            dataCell.addElement(tituloBike);
+            dataCell.addElement(dadosBike);
+
+            PdfPCell govLogoCell = new PdfPCell();
+            govLogoCell.setBorder(Rectangle.NO_BORDER);
+            govLogoCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            govLogoCell.setVerticalAlignment(Element.ALIGN_TOP);
+            govLogoCell.setPaddingTop(20);
+
+            arquivoImagem = "GovernoRioDeJaneiro.png";
+            caminhoImagem = Paths.get("src","main","java","org","example","Resources",arquivoImagem);
+            Image logoEstado = Image.getInstance(caminhoImagem.toString());
+            logoEstado.scaleToFit(150, 150);
+
+            arquivoImagem = "PrefeituraRioDeJaneiro.png";
+            caminhoImagem = Paths.get("src","main","java","org","example","Resources",arquivoImagem);
+            Image logoPrefeitura = Image.getInstance(caminhoImagem.toString());
+            logoPrefeitura.scaleToFit(150, 150);
+
+            PdfPTable logoTable = new PdfPTable(1);
+            logoTable.setWidthPercentage(100);
+
+            PdfPCell estadoCell = new PdfPCell(new Phrase(new Chunk(logoEstado, 0, 0, true)));
+            estadoCell.setBorder(Rectangle.NO_BORDER);
+            estadoCell.setPaddingBottom(30);
+
+            PdfPCell prefeituraCell = new PdfPCell(new Phrase(new Chunk(logoPrefeitura, 0, 0, true)));
+            prefeituraCell.setBorder(Rectangle.NO_BORDER);
+
+            logoTable.addCell(estadoCell);
+            logoTable.addCell(prefeituraCell);
+
+            govLogoCell.addElement(logoTable);
+
+            mainTable.addCell(dataCell);
+            mainTable.addCell(govLogoCell);
+
+            document.add(mainTable);
+
+            LineSeparator linha = new LineSeparator();
+            Chunk linhaLaranja = new Chunk(linha);
+            BaseColor corPersonalizada = new BaseColor(0xF8, 0x73, 0x14); // RGB de #FF6600
+            linha.setLineColor(corPersonalizada);
+            linha.setLineWidth(3);
+            document.add(linhaLaranja);
+
+            Font fonteItalico = new Font(Font.FontFamily.HELVETICA, 10,Font.ITALIC);
             Paragraph clausulas = new Paragraph(
-                    "O presente contrato tem como objeto a prestação dos seguintes serviços da Wheels LTDA ao CONTRATANTE:\n\n" +
+                    "\nO presente contrato tem como objeto a prestação dos seguintes serviços da Wheels LTDA ao CONTRATANTE:\n\n" +
                             "1 - Aluguel de Bicicleta única;\n" +
                             "2 - Aluguel da bicicleta " + contrato.getBicicleta().getNome() + " de número " + contrato.getBicicleta().getNumero() +
                             ", para o cliente " + contrato.getCliente().getNome() + " de e-mail " + contrato.getCliente().getEmail() + ", no período de tempo do dia " +
@@ -83,16 +141,23 @@ public class GerarContratoPDF {
                             contrato.getDataRetorno().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + ";\n" +
                             "3 - Caso houver atraso na devolução da bicicleta nos dias previstos, haverá taxa de R$ " +
                             contrato.getTaxaAtraso() + " por dia;\n" +
-                            "4 - Em caso de danos à bicicleta, o contratante deverá arcar com os custos equivalentes aos danos", fonteNormal);
+                            "4 - Em caso de danos à bicicleta, o contratante deverá arcar com os custos equivalentes aos danos\n\n", fonteItalico);
             document.add(clausulas);
+            document.add(linhaLaranja);
 
             double valorTotal = contrato.getNumeroDias() * contrato.getBicicleta().getDiariaTaxaAluguel() + contrato.getBicicleta().getDeposito();
-            Paragraph valor = new Paragraph("VALOR TOTAL DO CONTRATO: R$ " + valorTotal + "\n\n" +
-                    "O pagamento poderá ser realizado via:\n" +
-                    "- Crédito\n- Débito\n- PIX\n- Boleto\n\n", fonteNormal);
+            Paragraph tituloValor = new Paragraph("\nVALOR DO CONTRATO:" + valorTotal, fonteNegrito);
+            document.add(tituloValor);
+            Paragraph valor = new Paragraph("\nO valor total dos serviços será de R$ "+valorTotal+", caso houver atraso, haverá um adicional de R$"+valorTotal+" para cada dia a mais de atraso do contrato, caso houver da a ser pago da seguinte forma:" + valorTotal, fonteNormal);
             document.add(valor);
-            document.close();
 
+
+            Font fonteMetodosPagamento = new Font(Font.FontFamily.HELVETICA, 12);
+            Paragraph metodosPagamento = new Paragraph("\nO pagamento poderá ser realizado via:\n" +
+                    "- Crédito\n- Débito\n- PIX\n- Boleto\n\n", fonteMetodosPagamento);
+            document.add(metodosPagamento);
+
+            document.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
