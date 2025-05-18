@@ -6,21 +6,26 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.example.Models.Contrato;
 import java.io.FileOutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
 
 public class GerarContratoPDF {
-    public void criarPDF(Contrato contrato, String caminhoArquivo) {
+    public void criarPDF(Contrato contrato) {
         Document document = new Document();
+        String arquivoContrato = contrato.getIdentificador() + ".pdf";
+        Path caminhoArquivo = Paths.get("src","main","java","org","example","Util",arquivoContrato);
         try {
-            PdfWriter.getInstance(document, new FileOutputStream(caminhoArquivo));
+            PdfWriter.getInstance(document, new FileOutputStream(caminhoArquivo.toFile()));
             document.open();
 
-            // Tabela para o cabeçalho com 3 logos
             PdfPTable header = new PdfPTable(3);
             header.setWidthPercentage(100);
             header.setWidths(new int[]{1, 1, 1});
 
-            Image logoLoja = Image.getInstance("C:\\Users\\Usuario\\Documents\\GitHub\\back-end-maven\\src\\main\\java\\org\\example\\Resources\\LogoWheels.png");
+            String arquivoImagem = "LogoWheels.png";
+            Path caminhoImagem = Paths.get("src","main","java","org","example","Resources",arquivoImagem);
+            Image logoLoja = Image.getInstance(caminhoImagem.toString());
             logoLoja.scaleToFit(80, 80);
             PdfPCell cellLogoLoja = new PdfPCell(logoLoja);
             cellLogoLoja.setBorder(Rectangle.NO_BORDER);
@@ -44,7 +49,6 @@ public class GerarContratoPDF {
 
             document.add(header);
 
-            // Título
             Font tituloFonte = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD);
             Paragraph titulo = new Paragraph("CONTRATO DE ALUGUEL DA BICICLETA", tituloFonte);
             titulo.setAlignment(Element.ALIGN_CENTER);
@@ -52,10 +56,8 @@ public class GerarContratoPDF {
             titulo.setSpacingAfter(20);
             document.add(titulo);
 
-            // Fonte padrão
             Font fonteNormal = new Font(Font.FontFamily.HELVETICA, 12);
 
-            // Dados do cliente
             Paragraph dadosCliente = new Paragraph("CONTRATANTE:\n\n" +
                     "Nome: " + contrato.getCliente().getNome() + "\n" +
                     "E-mail: " + contrato.getCliente().getEmail() + "\n" +
@@ -63,7 +65,6 @@ public class GerarContratoPDF {
                     "Telefone: " + contrato.getCliente().getTelefone() + "\n\n", fonteNormal);
             document.add(dadosCliente);
 
-            // Dados da bicicleta
             Paragraph dadosBike = new Paragraph(
                     "BICICLETA ALUGADA:\n\n" +
                             "Nome: " + contrato.getBicicleta().getNome() + "\n" +
@@ -73,7 +74,6 @@ public class GerarContratoPDF {
                             "Tipo: " + contrato.getBicicleta().getTipo() + "\n\n", fonteNormal);
             document.add(dadosBike);
 
-            // Cláusulas
             Paragraph clausulas = new Paragraph(
                     "O presente contrato tem como objeto a prestação dos seguintes serviços da Wheels LTDA ao CONTRATANTE:\n\n" +
                             "1 - Aluguel de Bicicleta única;\n" +
@@ -86,17 +86,15 @@ public class GerarContratoPDF {
                             "4 - Em caso de danos à bicicleta, o contratante deverá arcar com os custos equivalentes aos danos", fonteNormal);
             document.add(clausulas);
 
-            // Valor total
             double valorTotal = contrato.getNumeroDias() * contrato.getBicicleta().getDiariaTaxaAluguel() + contrato.getBicicleta().getDeposito();
             Paragraph valor = new Paragraph("VALOR TOTAL DO CONTRATO: R$ " + valorTotal + "\n\n" +
                     "O pagamento poderá ser realizado via:\n" +
-                            "- Crédito\n- Débito\n- PIX\n- Boleto\n\n", fonteNormal);
+                    "- Crédito\n- Débito\n- PIX\n- Boleto\n\n", fonteNormal);
             document.add(valor);
-
             document.close();
 
         } catch (Exception e) {
-            e.getMessage();
+            e.printStackTrace();
         }
     }
 }
