@@ -20,7 +20,11 @@ public class GerarPDF {
     Font fonteNormal = new Font(Font.FontFamily.HELVETICA, 12);
     Font fonteMetodosPagamento = new Font(Font.FontFamily.HELVETICA, 12);
 
-    public void criarPDF(Contrato contrato) {
+    LineSeparator linha = new LineSeparator();
+    Chunk linhaLaranja = new Chunk(linha);
+    BaseColor corLaranja = new BaseColor(0xF8, 0x73, 0x14);
+
+    public void gerarContratoAluguel(Contrato contrato) {
         Document document = new Document();
         String arquivoContrato = contrato.getIdentificador() + ".pdf";
         Path caminhoArquivo = Paths.get("src","main","java","org","example","Util",arquivoContrato);
@@ -127,10 +131,7 @@ public class GerarPDF {
 
             document.add(mainTable);
 
-            LineSeparator linha = new LineSeparator();
-            Chunk linhaLaranja = new Chunk(linha);
-            BaseColor corPersonalizada = new BaseColor(0xF8, 0x73, 0x14); // RGB de #FF6600
-            linha.setLineColor(corPersonalizada);
+            linha.setLineColor(corLaranja);
             linha.setLineWidth(3);
             document.add(linhaLaranja);
 
@@ -163,7 +164,8 @@ public class GerarPDF {
             e.printStackTrace();
         }
     }
-    public void criarComprovantePagamento(Contrato contrato) {
+
+    public void gerarComprovantePagamento(Contrato contrato) {
         Document document = new Document();
         String arquivoComprovantePagamento = "CDP-"+contrato.getIdentificador() + ".pdf";
         Path caminhoArquivo = Paths.get("src","main","java","org","example","Util",arquivoComprovantePagamento);
@@ -214,14 +216,14 @@ public class GerarPDF {
             tabelaLado1.setBorder(Rectangle.NO_BORDER);
 
             Paragraph tituloDeLoja = new Paragraph(
-                    "DE:", fonteNegrito);
+                    "DE:\n", fonteNegrito);
             Paragraph dadosLoja = new Paragraph(
                     "Wheels LTDA\n" +
                             "Rio de Janeiro, Centro\n" +
                             "(21) 99254-4146\n", fonteNormal);
 
             Paragraph tituloCobrar = new Paragraph(
-                    "COBRAR A:", fonteNegrito);
+                    "COBRAR A:\n", fonteNegrito);
             Paragraph dadosCobrar = new Paragraph(
                     contrato.getCliente().getNome()+"\n" +
                             contrato.getCliente().getEndereco()+"\n" +
@@ -260,18 +262,23 @@ public class GerarPDF {
 
             document.add(mainTable);
 
+            Paragraph textoEspaco = new Paragraph("\n");
+            document.add(textoEspaco);
+            linha.setLineColor(corLaranja);
+            linha.setLineWidth(3);
+            document.add(linhaLaranja);
+
             // Tabela de itens
-            Paragraph textoEspaço = new Paragraph("\n");
-            document.add(textoEspaço);
-            document.add(textoEspaço);
+            document.add(textoEspaco);
+            document.add(textoEspaco);
 
             PdfPTable tabelaDescricaoPrecoValor = new PdfPTable(3);
             tabelaDescricaoPrecoValor.setWidthPercentage(100);
             tabelaDescricaoPrecoValor.setWidths(new float[]{40, 40, 20});
 
-            PdfPCell tabelaCedula = new PdfPCell();
-            logoCell.setBorder(2);
-            logoCell.setHorizontalAlignment(Element.ALIGN_LEFT);
+//            PdfPCell tabelaCedula = new PdfPCell();
+//            tabelaCedula.setBorder(2);
+//            tabelaCedula.setHorizontalAlignment(Element.ALIGN_LEFT);
 
             Paragraph linhaTitulo = new Paragraph("DESCRIÇÃO",fonteNegrito);
             tabelaDescricaoPrecoValor.addCell(linhaTitulo);
@@ -301,7 +308,7 @@ public class GerarPDF {
             linha3 = new Paragraph("199,00",fonteNormal);
             tabelaDescricaoPrecoValor.addCell(linha3);
 
-            Paragraph linhaValor = new Paragraph("TOTAL",fonteNormal);
+            Paragraph linhaValor = new Paragraph("TOTAL",fonteNegrito);
             tabelaDescricaoPrecoValor.addCell(linhaValor);
             linhaValor = new Paragraph("",fonteNormal);
             tabelaDescricaoPrecoValor.addCell(linhaValor);
@@ -310,20 +317,20 @@ public class GerarPDF {
 
             document.add(tabelaDescricaoPrecoValor);
 
-            document.add(textoEspaço);
+            document.add(textoEspaco);
 
             Paragraph metodoPagamento = new Paragraph("Método de pagamento: Pix",fonteNegrito);
             document.add(metodoPagamento);
 
-            document.add(textoEspaço);
-            document.add(textoEspaço);
+            document.add(textoEspaco);
+            document.add(textoEspaco);
 
             PdfPTable tabelaPagoDevolver = new PdfPTable(2);
             tabelaPagoDevolver.setWidthPercentage(100);
             tabelaPagoDevolver.setWidths(new float[]{70,30});
             tabelaPagoDevolver.setPaddingTop(100);
 
-            Paragraph linhaPago = new Paragraph("TOTAL",fonteNegrito);
+            Paragraph linhaPago = new Paragraph("TOTAL PAGO",fonteNegrito);
             tabelaPagoDevolver.addCell(linhaPago);
             linhaPago = new Paragraph("R$ 443,00",fonteNormal);
             tabelaPagoDevolver.addCell(linhaPago);
@@ -335,11 +342,9 @@ public class GerarPDF {
 
             document.add(tabelaPagoDevolver);
 
-            document.add(textoEspaço);
-
             PdfPTable tabelaAssinatura = new PdfPTable(2);
             tabelaAssinatura.setWidthPercentage(100);
-            tabelaAssinatura.setWidths(new float[]{80,20});
+            tabelaAssinatura.setWidths(new float[]{65,35});
 
             PdfPCell cedulaVazia = new PdfPCell();
             cedulaVazia.setBorder(Rectangle.NO_BORDER);
@@ -348,16 +353,23 @@ public class GerarPDF {
             cedulaAssinatura.setBorder(Rectangle.NO_BORDER);
             cedulaAssinatura.setVerticalAlignment(Element.ALIGN_MIDDLE);
 
-            Paragraph assinatura = new Paragraph("Assinatura: ....",fonteNormal);
-            assinatura.setAlignment(Element.ALIGN_CENTER);
+            arquivoImagem = "assinaturaWheelsLTDA.png";
+            caminhoImagem = Paths.get("src","main","java","org","example","Resources",arquivoImagem);
+            Image assinaturaFoto = Image.getInstance(caminhoImagem.toString());
+            assinaturaFoto.scaleToFit(160, 160);
 
-            cedulaAssinatura.addElement(assinatura);
+            cedulaAssinatura.addElement(new Chunk(assinaturaFoto, 0, 0, true));
+
             tabelaAssinatura.addCell(cedulaVazia);
             tabelaAssinatura.addCell(cedulaAssinatura);
+            document.add(textoEspaco);
 
             document.add(tabelaAssinatura);
-            document.add(textoEspaço);
-            document.add(textoEspaço);
+
+            document.add(linhaLaranja);
+
+            document.add(textoEspaco);
+            document.add(textoEspaco);
 
             Paragraph termosTitulo = new Paragraph("TERMOS E CONDIÇÕES",fonteNegrito);
             document.add(termosTitulo);

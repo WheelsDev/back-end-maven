@@ -23,11 +23,11 @@ public class Main {
         Contrato novoContrato = new Contrato(novoCliente,novaBicicleta, LocalDate.now(),10);
         GerarPDF gerarPDF = new GerarPDF();
 //        GerarEmail email = new GerarEmail();
-//        gerarPDF.criarPDF(novoContrato);
+//        gerarPDF.gerarContratoAluguel(novoContrato);
 //        if (novoCliente.getEmail() != null) {
 //            email.enviarContratoDeAluguel(novoCliente, novoContrato);
 //        }
-        gerarPDF.criarComprovantePagamento(novoContrato);
+        gerarPDF.gerarComprovantePagamento(novoContrato);
 
     }
 }
