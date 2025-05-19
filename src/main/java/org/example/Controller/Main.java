@@ -1,11 +1,9 @@
 package org.example.Controller;
 
-import org.example.DataAccessObject.UsuarioDAO;
 import org.example.Models.*;
-import org.example.Util.GerarContratoPDF;
+import org.example.Util.GerarPDF;
 import org.example.Util.GerarEmail;
 
-import java.io.File;
 import java.time.LocalDate;
 
 public class Main {
@@ -23,11 +21,13 @@ public class Main {
         Cliente novoCliente = new Cliente("Richard","Rua oduvaldu Cozzi","21998228014","richard.alves@al.infnet.edu.br");
         Bicicleta novaBicicleta = new Bicicleta("Bicicleta Anos 2000","Volkswagem","Grande",15,"Esportiva",5,true);
         Contrato novoContrato = new Contrato(novoCliente,novaBicicleta, LocalDate.now(),10);
-        GerarContratoPDF contratoPDF = new GerarContratoPDF();
-        GerarEmail email = new GerarEmail();
-        contratoPDF.criarPDF(novoContrato);
-        if (novoCliente.getEmail() != null) {
-            email.enviarContratoDeAluguel(novoCliente, novoContrato);
-        }
+        GerarPDF gerarPDF = new GerarPDF();
+//        GerarEmail email = new GerarEmail();
+//        gerarPDF.criarPDF(novoContrato);
+//        if (novoCliente.getEmail() != null) {
+//            email.enviarContratoDeAluguel(novoCliente, novoContrato);
+//        }
+        gerarPDF.criarComprovantePagamento(novoContrato);
+
     }
 }
