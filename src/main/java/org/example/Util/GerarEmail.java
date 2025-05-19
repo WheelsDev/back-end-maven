@@ -7,10 +7,6 @@ import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 import org.example.Models.Cliente;
 import org.example.Models.Contrato;
-import org.springframework.boot.context.config.ConfigTreeConfigDataLoader;
-
-import javax.swing.text.Document;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -51,6 +47,56 @@ public class GerarEmail {
                 "wheelsltda@gmail.com\n" +
                 "\n";
 
+        Session session = Session.getInstance(propriedadesEmail(), new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(remetente, senha);
+            }
+        });
+        try {
+            Message mensagem = new MimeMessage(session);
+            mensagem.setFrom(new InternetAddress(remetente));
+            mensagem.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destinatario));
+            mensagem.setSubject(assunto);
+            mensagem.setText(corpo);
+            Multipart multipart = new MimeMultipart();
+            MimeBodyPart corpoTexto = new MimeBodyPart();
+            corpoTexto.setText(corpo);
+            multipart.addBodyPart(corpoTexto);
+            MimeBodyPart anexo = new MimeBodyPart();
+            anexo.attachFile(caminhoArquivo.toFile());
+            multipart.addBodyPart(anexo);
+            mensagem.setContent(multipart);
+            Transport.send(mensagem);
+            System.out.println("Mensagem enviada com sucesso!");
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void enviarComprovantePagamento(Cliente cliente, Contrato contrato) {
+        String arquivoComprovantePagamento = "CDP-" + contrato.getIdentificador() + ".pdf";
+        Path caminhoArquivo = Paths.get("src","main","java","org","example","Util",arquivoComprovantePagamento);
+        String destinatario = cliente.getEmail();
+        String assunto = "Envio do Comprovante de Pagamento";
+        String corpo = "Prezado(a) " + cliente.getNome() + ",\n" +
+                "\n" +
+                "Como vai?\n" +
+                "\n" +
+                "Segue em anexo o comprovante de pagamento referente ao aluguel da bicicleta.\n" +
+                "Verifique, por gentileza, se todas as informações estão corretas.\n" +
+                "\n" +
+                "Em caso de qualquer dúvida ou necessidade de correção, fico à disposição para auxiliá-lo(a).\n" +
+                "\n" +
+                "Agradecemos pela preferência!\n" +
+                "Volte sempre aos pedais!\n" +
+                "\n" +
+                "Atenciosamente,\n" +
+                "Wheels LTDA\n" +
+                "Brasil - Rio de Janeiro - Centro\n" +
+                "+55 (21) 99822-8014\n" +
+                "wheelsltda@gmail.com\n" +
+                "\n";
         Session session = Session.getInstance(propriedadesEmail(), new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(remetente, senha);

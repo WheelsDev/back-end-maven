@@ -1,13 +1,10 @@
 package org.example.Util;
 
-import com.google.common.collect.Table;
-import com.google.common.collect.Table.Cell;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
-import javafx.scene.text.TextAlignment;
 import org.example.Models.Contrato;
 import java.io.FileOutputStream;
 import java.nio.file.Path;
@@ -15,6 +12,8 @@ import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
 
 public class GerarPDF {
+    DateTimeFormatter dataFormatada = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
     Font tituloFonte = new Font(Font.FontFamily.HELVETICA, 16,Font.BOLD);
     Font fonteNegrito = new Font(Font.FontFamily.HELVETICA, 14,Font.BOLD);
     Font fonteNormal = new Font(Font.FontFamily.HELVETICA, 12);
@@ -206,7 +205,7 @@ public class GerarPDF {
             headerTable.addCell(emptyCell);
 
             document.add(headerTable);
-//
+
             PdfPTable mainTable = new PdfPTable(2);
             mainTable.setWidthPercentage(100);
             mainTable.setWidths(new float[]{60, 40});
@@ -241,9 +240,9 @@ public class GerarPDF {
             Paragraph tituloRecibo = new Paragraph(
                     "RECIBO # CDP-"+contrato.getIdentificador()+"\n", fonteNormal);
             Paragraph dadosRecibo = new Paragraph(
-                    "DATA DO RECIBO 08/05/12\n" +
+                    "DATA DO RECIBO "+contrato.getDataInicial().format(dataFormatada) +"\n" +
                             "P.O # CON-"+contrato.getIdentificador()+"\n" +
-                            "DATA DE VENCIMENTO 12/07/2025\n", fonteNormal);
+                            "DATA DE VENCIMENTO "+contrato.getDataRetorno().format(dataFormatada)+"\n", fonteNormal);
 
             Paragraph tituloEnviarPara = new Paragraph(
                     "ENVIAR PARA\n", fonteNegrito);
@@ -268,17 +267,12 @@ public class GerarPDF {
             linha.setLineWidth(3);
             document.add(linhaLaranja);
 
-            // Tabela de itens
             document.add(textoEspaco);
             document.add(textoEspaco);
 
             PdfPTable tabelaDescricaoPrecoValor = new PdfPTable(3);
             tabelaDescricaoPrecoValor.setWidthPercentage(100);
             tabelaDescricaoPrecoValor.setWidths(new float[]{40, 40, 20});
-
-//            PdfPCell tabelaCedula = new PdfPCell();
-//            tabelaCedula.setBorder(2);
-//            tabelaCedula.setHorizontalAlignment(Element.ALIGN_LEFT);
 
             Paragraph linhaTitulo = new Paragraph("DESCRIÇÃO",fonteNegrito);
             tabelaDescricaoPrecoValor.addCell(linhaTitulo);
@@ -289,23 +283,23 @@ public class GerarPDF {
 
             Paragraph linha1 = new Paragraph(" • "+contrato.getBicicleta().getNome(),fonteNormal);
             tabelaDescricaoPrecoValor.addCell(linha1);
-            linha1 = new Paragraph("123,00",fonteNormal);
+            linha1 = new Paragraph(contrato.getBicicleta().getDeposito() + " + " + contrato.getBicicleta().getDiariaTaxaAluguel() + " / dia ("+contrato.getNumeroDias()+")" ,fonteNormal);
             tabelaDescricaoPrecoValor.addCell(linha1);
             linha1 = new Paragraph("123,00",fonteNormal);
             tabelaDescricaoPrecoValor.addCell(linha1);
 
             Paragraph linha2 = new Paragraph(" • Atraso na Devolução",fonteNormal);
             tabelaDescricaoPrecoValor.addCell(linha2);
-            linha2 = new Paragraph("60,5 / dia (2 dias)",fonteNormal);
+            linha2 = new Paragraph(contrato.getTaxaAtraso()+" / dia (2 dias)",fonteNormal);
             tabelaDescricaoPrecoValor.addCell(linha2);
             linha2 = new Paragraph("121,00",fonteNormal);
             tabelaDescricaoPrecoValor.addCell(linha2);
 
             Paragraph linha3 = new Paragraph(" • Danos à bicicleta",fonteNormal);
             tabelaDescricaoPrecoValor.addCell(linha3);
-            linha3 = new Paragraph("199,00",fonteNormal);
+            linha3 = new Paragraph(contrato.getTaxaDano()+" taxa fixa de dano",fonteNormal);
             tabelaDescricaoPrecoValor.addCell(linha3);
-            linha3 = new Paragraph("199,00",fonteNormal);
+            linha3 = new Paragraph(contrato.getTaxaDano()+"",fonteNormal);
             tabelaDescricaoPrecoValor.addCell(linha3);
 
             Paragraph linhaValor = new Paragraph("TOTAL",fonteNegrito);

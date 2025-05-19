@@ -22,12 +22,16 @@ public class Main {
         Bicicleta novaBicicleta = new Bicicleta("Bicicleta Anos 2000","Volkswagem","Grande",15,"Esportiva",5,true);
         Contrato novoContrato = new Contrato(novoCliente,novaBicicleta, LocalDate.now(),10);
         GerarPDF gerarPDF = new GerarPDF();
-//        GerarEmail email = new GerarEmail();
-//        gerarPDF.gerarContratoAluguel(novoContrato);
-//        if (novoCliente.getEmail() != null) {
-//            email.enviarContratoDeAluguel(novoCliente, novoContrato);
-//        }
+        GerarEmail email = new GerarEmail();
+        gerarPDF.gerarContratoAluguel(novoContrato);
+        if (novoCliente.getEmail() != null) {
+            email.enviarContratoDeAluguel(novoCliente, novoContrato);
+        }
         gerarPDF.gerarComprovantePagamento(novoContrato);
+                gerarPDF.gerarContratoAluguel(novoContrato);
+        if (novoCliente.getEmail() != null) {
+            email.enviarComprovantePagamento(novoCliente, novoContrato);
+        }
 
     }
 }
