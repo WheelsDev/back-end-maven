@@ -112,6 +112,4 @@ public class PagamentoDAO {
             System.err.println("Erro ao atualizar status do pagamento: " + e.getMessage());
         }
     }
-
-
 }

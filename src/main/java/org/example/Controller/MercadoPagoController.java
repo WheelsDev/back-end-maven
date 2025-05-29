@@ -1,7 +1,5 @@
 package org.example.Controller;
 
-import com.mercadopago.exceptions.MPApiException;
-import com.mercadopago.exceptions.MPException;
 import org.example.DataAccessObject.ContratoDAO;
 import org.example.Integration.MercadoPagoService;
 import org.example.Models.Contrato;
@@ -31,7 +29,7 @@ public class MercadoPagoController {
         try {
             String link = mercadoPagoService.criarPagamento(contrato, valorTotal);
             return ResponseEntity.ok(link);
-        } catch (MPException | MPApiException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(500).body("Erro ao gerar link de pagamento: " + e.getMessage());
         }
     }

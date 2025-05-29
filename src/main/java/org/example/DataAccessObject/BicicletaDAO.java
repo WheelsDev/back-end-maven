@@ -8,6 +8,13 @@ import java.sql.*;
 public class BicicletaDAO {
 
     public BicicletaDAO() {
+
+        Connection conn1 = GerenciadorBancoDados.conectar();
+        if (conn1 == null) {
+            System.err.println("Conexão falhou!");
+            return;
+        }
+
         try (Connection conn = GerenciadorBancoDados.conectar();
              Statement stmt = conn.createStatement()) {
 
@@ -15,16 +22,16 @@ public class BicicletaDAO {
                     "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "numero INTEGER UNIQUE NOT NULL, " +
                     "nome TEXT NOT NULL, " +
-                    "marca TEXT NOT NULL" +
-                    "modelo TEXT NOT NULL" +
-                    "deposito REAL NOT NULL" +
-                    "tipo TEXT NOT NULL" +
-                    "diaria REAL NOT NULL" +
+                    "marca TEXT NOT NULL, " +
+                    "modelo TEXT NOT NULL, " +
+                    "deposito REAL NOT NULL, " +
+                    "tipo TEXT NOT NULL, " +
+                    "diaria REAL NOT NULL, " +
                     "disponibilidade BOOLEAN NOT NULL" +
                     ")");
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());;
         }
     }
 
