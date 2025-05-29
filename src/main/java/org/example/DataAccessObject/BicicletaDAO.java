@@ -2,19 +2,19 @@ package org.example.DataAccessObject;
 
 import org.example.Models.Bicicleta;
 import org.example.Util.GerenciadorBancoDados;
-
+import org.springframework.stereotype.Repository;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
+@Repository
 public class BicicletaDAO {
 
     public BicicletaDAO() {
+        inicializarTabela();
+    }
 
-        Connection conn1 = GerenciadorBancoDados.conectar();
-        if (conn1 == null) {
-            System.err.println("Conexão falhou!");
-            return;
-        }
-
+    private void inicializarTabela() {
         try (Connection conn = GerenciadorBancoDados.conectar();
              Statement stmt = conn.createStatement()) {
 
@@ -29,41 +29,45 @@ public class BicicletaDAO {
                     "diaria REAL NOT NULL, " +
                     "disponibilidade BOOLEAN NOT NULL" +
                     ")");
-
         } catch (SQLException e) {
-            System.out.println(e.getMessage());;
+            System.err.println("Erro ao criar tabela bicicletas: " + e.getMessage());
         }
     }
 
-    public void inserir(Bicicleta bicicleta) {
-
+    public Bicicleta inserir(Bicicleta bicicleta) {
         String sql = "INSERT INTO bicicletas (numero, nome, marca, modelo, deposito, tipo, diaria, disponibilidade) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = GerenciadorBancoDados.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setInt(1, bicicleta.getNumero());
             pstmt.setString(2, bicicleta.getNome());
             pstmt.setString(3, bicicleta.getMarca());
             pstmt.setString(4, bicicleta.getModelo());
             pstmt.setDouble(5, bicicleta.getDeposito());
-            pstmt.setString(6,bicicleta.getTipo());
+            pstmt.setString(6, bicicleta.getTipo());
             pstmt.setDouble(7, bicicleta.getDiariaTaxaAluguel());
             pstmt.setBoolean(8, bicicleta.isDisponibilidade());
+
             pstmt.executeUpdate();
+            return bicicleta;
 
         } catch (SQLException e) {
-            System.err.println("Erro ao inserir bicicleta\n" + e.getMessage());
+            System.err.println("Erro ao inserir bicicleta: " + e.getMessage());
+            return null;
         }
     }
 
     public Bicicleta buscarPorNumero(int numero) {
-
         String sql = "SELECT * FROM bicicletas WHERE numero = ?";
+
         try (Connection conn = GerenciadorBancoDados.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setInt(1, numero);
             ResultSet rs = pstmt.executeQuery();
+
             if (rs.next()) {
                 Bicicleta bicicleta = new Bicicleta();
                 bicicleta.setNumero(rs.getInt("numero"));
@@ -78,16 +82,19 @@ public class BicicletaDAO {
             }
 
         } catch (SQLException e) {
-            System.err.println("Erro ao buscar bicicleta por numero\n" + e.getMessage());
-        } return null;
+            System.err.println("Erro ao buscar bicicleta por número: " + e.getMessage());
+        }
+
+        return null;
     }
 
-    public void atualizar(Bicicleta bicicleta) {
+    public Bicicleta atualizar(Bicicleta bicicleta) {
         String sql = "UPDATE bicicletas SET nome = ?, marca = ?, modelo = ?, deposito = ?, tipo = ?, diaria = ?, disponibilidade = ? " +
                 "WHERE numero = ?";
 
         try (Connection conn = GerenciadorBancoDados.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setString(1, bicicleta.getNome());
             pstmt.setString(2, bicicleta.getMarca());
             pstmt.setString(3, bicicleta.getModelo());
@@ -96,22 +103,61 @@ public class BicicletaDAO {
             pstmt.setDouble(6, bicicleta.getDiariaTaxaAluguel());
             pstmt.setBoolean(7, bicicleta.isDisponibilidade());
             pstmt.setInt(8, bicicleta.getNumero());
-            pstmt.executeUpdate();
+
+            int rowsAffected = pstmt.executeUpdate();
+
+            if (rowsAffected > 0) {
+                return bicicleta;
+            }
 
         } catch (SQLException e) {
             System.err.println("Erro ao atualizar bicicleta: " + e.getMessage());
         }
+
+        return null;
     }
 
-    public void deletarPorNumero(int numero) {
-
+    public boolean deletarPorNumero(int numero) {
         String sql = "DELETE FROM bicicletas WHERE numero = ?";
+
         try (Connection conn = GerenciadorBancoDados.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setInt(1, numero);
-            pstmt.executeUpdate();
+            int affectedRows = pstmt.executeUpdate();
+            return affectedRows > 0;
+
         } catch (SQLException e) {
             System.err.println("Erro ao deletar bicicleta: " + e.getMessage());
+            return false;
         }
+    }
+
+    public List<Bicicleta> listarTodas() {
+        List<Bicicleta> lista = new ArrayList<>();
+        String sql = "SELECT * FROM bicicletas";
+
+        try (Connection conn = GerenciadorBancoDados.conectar();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                Bicicleta bicicleta = new Bicicleta();
+                bicicleta.setNumero(rs.getInt("numero"));
+                bicicleta.setNome(rs.getString("nome"));
+                bicicleta.setMarca(rs.getString("marca"));
+                bicicleta.setModelo(rs.getString("modelo"));
+                bicicleta.setDeposito(rs.getDouble("deposito"));
+                bicicleta.setTipo(rs.getString("tipo"));
+                bicicleta.setDiariaTaxaAluguel(rs.getDouble("diaria"));
+                bicicleta.setDisponibilidade(rs.getBoolean("disponibilidade"));
+                lista.add(bicicleta);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao listar bicicletas: " + e.getMessage());
+        }
+
+        return lista;
     }
 }
