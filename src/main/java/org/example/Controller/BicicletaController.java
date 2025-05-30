@@ -22,9 +22,9 @@ public class BicicletaController {
         return ResponseEntity.ok(bicicletas);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Bicicleta> buscarPorId(@PathVariable int id) {
-        Bicicleta bicicleta = bicicletaDAO.buscarPorNumero(id);
+    @GetMapping("/{numero}")
+    public ResponseEntity<Bicicleta> buscarPorId(@PathVariable int numero) {
+        Bicicleta bicicleta = bicicletaDAO.buscarPorNumero(numero);
         if (bicicleta != null) {
             return ResponseEntity.ok(bicicleta);
         }
@@ -37,19 +37,20 @@ public class BicicletaController {
         return ResponseEntity.ok(novaBicicleta);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Bicicleta> atualizar(@PathVariable int id, @RequestBody Bicicleta bicicleta) {
-        bicicleta.setNumero(id);
-        Bicicleta bicicletaAtualizada = bicicletaDAO.atualizar(bicicleta);
-        if (bicicletaAtualizada != null) {
-            return ResponseEntity.ok(bicicletaAtualizada);
+    @PutMapping("/{numero}")
+    public ResponseEntity<String> atualizar(@PathVariable int numero, @RequestBody Bicicleta bicicleta) {
+        bicicleta.setNumero(numero);
+        boolean bicicletaAtualizada = bicicletaDAO.atualizar(bicicleta);
+        if (bicicletaAtualizada) {
+            return ResponseEntity.ok("Bicicleta atualizada com sucesso.");
         }
         return ResponseEntity.notFound().build();
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable int id) {
-        boolean removido = bicicletaDAO.deletarPorNumero(id);
+
+    @DeleteMapping("/{numero}")
+    public ResponseEntity<Void> deletar(@PathVariable int numero) {
+        boolean removido = bicicletaDAO.deletarPorNumero(numero);
         if (removido) {
             return ResponseEntity.noContent().build();
         }

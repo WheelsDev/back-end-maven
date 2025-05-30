@@ -10,15 +10,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/pagamentos")
+@RequestMapping("/checkout")
 public class MercadoPagoController {
 
     private final ContratoDAO contratoDAO = new ContratoDAO();
     private final MercadoPagoService mercadoPagoService = new MercadoPagoService();
 
-    @GetMapping("/gerar/{contratoId}")
-    public ResponseEntity<String> gerarLinkDePagamento(@PathVariable String contratoId) {
-        Contrato contrato = contratoDAO.buscarPorIdentificador(contratoId);
+    @GetMapping("/gerar/{identificador}")
+    public ResponseEntity<String> gerarLinkDePagamento(@PathVariable String identificador) {
+        Contrato contrato = contratoDAO.buscarPorIdentificador(identificador);
         if (contrato == null) {
             return ResponseEntity.notFound().build();
         }

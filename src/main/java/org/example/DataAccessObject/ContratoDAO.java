@@ -1,15 +1,13 @@
 package org.example.DataAccessObject;
 
-import org.example.Models.Pagamento;
-import org.example.Models.StatusPagamento;
-import org.example.Models.Bicicleta;
-import org.example.Models.Cliente;
-import org.example.Models.Contrato;
-import org.example.Models.StatusContrato;
+import org.example.Models.*;
 import org.example.Util.GerenciadorBancoDados;
+import org.springframework.stereotype.Repository;
+
 import java.sql.*;
 import java.time.LocalDate;
 
+@Repository
 public class ContratoDAO {
 
     public ContratoDAO() {
@@ -29,11 +27,11 @@ public class ContratoDAO {
                     "status TEXT NOT NULL" +
                     ")");
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Erro ao criar tabela contratos: " + e.getMessage());
         }
     }
 
-    public void inserir(Contrato contrato) {
+    public boolean inserir(Contrato contrato) {
         String sql = "INSERT INTO contratos (identificador, cliente, bicicleta, data_inicio, " +
                 "data_retorno, taxa_atraso, taxa_dano, dias, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -51,28 +49,30 @@ public class ContratoDAO {
             pstmt.setString(9, contrato.getStatus().toString());
             pstmt.executeUpdate();
 
+            // Inserir pagamento associado
             Pagamento pagamento = new Pagamento(contrato);
-            if (contrato.getStatus() == StatusContrato.FINALIZADO) {
-                pagamento.setStatus(StatusPagamento.PAGO);
-            } else {
-                pagamento.setStatus(StatusPagamento.PENDENTE);
-            }
+            pagamento.setStatus(contrato.getStatus() == StatusContrato.FINALIZADO
+                    ? StatusPagamento.PAGO : StatusPagamento.PENDENTE);
 
-            PagamentoDAO pagamentoDAO = new PagamentoDAO();
-            pagamentoDAO.inserir(pagamento);
+            new PagamentoDAO().inserir(pagamento);
+
+            return true;
 
         } catch (SQLException e) {
-            System.err.println("Erro ao inserir contrato " + e.getMessage());
+            System.err.println("Erro ao inserir contrato: " + e.getMessage());
+            return false;
         }
     }
 
     public Contrato buscarPorIdentificador(String identificador) {
-
         String sql = "SELECT * FROM contratos WHERE identificador = ?";
+
         try (Connection conn = GerenciadorBancoDados.conectar();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setString(1, identificador);
             ResultSet rs = pstmt.executeQuery();
+
             if (rs.next()) {
                 Contrato contrato = new Contrato();
                 contrato.setIdentificador(rs.getString("identificador"));
@@ -91,21 +91,24 @@ public class ContratoDAO {
                 contrato.setTaxaDano(rs.getDouble("taxa_dano"));
                 contrato.setNumeroDias(rs.getInt("dias"));
                 contrato.setStatus(StatusContrato.valueOf(rs.getString("status")));
+
                 return contrato;
             }
 
         } catch (SQLException e) {
-            System.err.println("\nErro ao procurar contrato por identificador\n" + e.getMessage());
+            System.err.println("Erro ao buscar contrato por identificador: " + e.getMessage());
         }
+
         return null;
     }
 
-    public void atualizar(Contrato contrato) {
-
+    public boolean atualizar(Contrato contrato) {
         String sql = "UPDATE contratos SET cliente = ?, bicicleta = ?, data_inicio = ?, data_retorno = ?, " +
                 "taxa_atraso = ?, taxa_dano = ?, dias = ?, status = ? WHERE identificador = ?";
+
         try (Connection conn = GerenciadorBancoDados.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setString(1, contrato.getCliente().getNome());
             pstmt.setString(2, contrato.getBicicleta().getNome());
             pstmt.setString(3, contrato.getDataInicial().toString());
@@ -115,23 +118,29 @@ public class ContratoDAO {
             pstmt.setInt(7, contrato.getNumeroDias());
             pstmt.setString(8, contrato.getStatus().toString());
             pstmt.setString(9, contrato.getIdentificador());
-            pstmt.executeUpdate();
+
+            int linhasAfetadas = pstmt.executeUpdate();
+            return linhasAfetadas > 0;
 
         } catch (SQLException e) {
             System.err.println("Erro ao atualizar contrato: " + e.getMessage());
+            return false;
         }
     }
 
-    public void deletarPorIdentificador(String identificador) {
-
+    public boolean deletarPorIdentificador(String identificador) {
         String sql = "DELETE FROM contratos WHERE identificador = ?";
+
         try (Connection conn = GerenciadorBancoDados.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setString(1, identificador);
-            pstmt.executeUpdate();
+            int linhasAfetadas = pstmt.executeUpdate();
+            return linhasAfetadas > 0;
+
         } catch (SQLException e) {
             System.err.println("Erro ao deletar contrato: " + e.getMessage());
+            return false;
         }
     }
-
 }

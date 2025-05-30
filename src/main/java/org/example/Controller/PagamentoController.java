@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/pagamentos")
+@RequestMapping("/api/pagamentos")
 public class PagamentoController {
 
     private final PagamentoDAO pagamentoDAO = new PagamentoDAO();
@@ -21,9 +21,9 @@ public class PagamentoController {
         return pagamentoDAO.listarParaGrafico();
     }
 
-    @GetMapping("/{contratoId}")
-    public ResponseEntity<Pagamento> buscarPorContrato(@PathVariable String contratoId) {
-        Pagamento pagamento = pagamentoDAO.buscarPorContratoId(contratoId);
+    @GetMapping("/{identificador}")
+    public ResponseEntity<Pagamento> buscarPorContrato(@PathVariable String identificador) {
+        Pagamento pagamento = pagamentoDAO.buscarPorContratoId(identificador);
         if (pagamento != null) {
             return ResponseEntity.ok(pagamento);
         } else {
@@ -31,16 +31,16 @@ public class PagamentoController {
         }
     }
 
-    @PostMapping("/finalizar/{contratoId}")
-    public ResponseEntity<Void> finalizarPagamento(@PathVariable String contratoId) {
-        ContratoDAO contratoDAO = new ContratoDAO(); // CORREÇÃO
-        Contrato contrato = contratoDAO.buscarPorIdentificador(contratoId);
+    @PostMapping("/finalizar/{identificador}")
+    public ResponseEntity<Void> finalizarPagamento(@PathVariable String identificador) {
+        ContratoDAO contratoDAO = new ContratoDAO();
+        Contrato contrato = contratoDAO.buscarPorIdentificador(identificador);
         if (contrato == null) return ResponseEntity.notFound().build();
 
         contrato.setStatus(StatusContrato.FINALIZADO);
         contratoDAO.atualizar(contrato);
 
-        Pagamento pagamento = pagamentoDAO.buscarPorContratoId(contratoId);
+        Pagamento pagamento = pagamentoDAO.buscarPorContratoId(identificador);
         if (pagamento != null) {
             pagamento.setStatus(StatusPagamento.PAGO);
             pagamentoDAO.atualizarStatus(pagamento);

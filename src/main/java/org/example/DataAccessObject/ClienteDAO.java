@@ -2,9 +2,13 @@ package org.example.DataAccessObject;
 
 import org.example.Models.Cliente;
 import org.example.Util.GerenciadorBancoDados;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
+@Repository
 public class ClienteDAO {
 
     public ClienteDAO() {
@@ -23,21 +27,43 @@ public class ClienteDAO {
         }
     }
 
-    public void inserir(Cliente cliente) {
-
-        String sql = "INSERT INTO clientes (nome, endereco, telefone, email) VALUES (?, ?, ?, ?)";
+    public List<Cliente> listarTodos() {
+        List<Cliente> lista = new ArrayList<>();
+        String sql = "SELECT * FROM clientes";
 
         try (Connection conn = GerenciadorBancoDados.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
 
+            while (rs.next()) {
+                Cliente cliente = new Cliente();
+                cliente.setNome(rs.getString("nome"));
+                cliente.setEndereco(rs.getString("endereco"));
+                cliente.setTelefone(rs.getString("telefone"));
+                cliente.setEmail(rs.getString("email"));
+                lista.add(cliente);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao listar clientes: " + e.getMessage());
+        }
+
+        return lista;
+    }
+
+    public Cliente inserir(Cliente cliente) {
+        String sql = "INSERT INTO clientes (nome, endereco, telefone, email) VALUES (?, ?, ?, ?)";
+        try (Connection conn = GerenciadorBancoDados.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, cliente.getNome());
             pstmt.setString(2, cliente.getEndereco());
             pstmt.setString(3, cliente.getTelefone());
             pstmt.setString(4, cliente.getEmail());
             pstmt.executeUpdate();
-
+            return cliente;
         } catch (SQLException e) {
             System.err.println("Erro ao inserir cliente: " + e.getMessage());
+            return null;
         }
     }
 
@@ -62,31 +88,35 @@ public class ClienteDAO {
         return null;
     }
 
-    public void atualizar(Cliente cliente) {
-
+    public boolean atualizar(Cliente cliente) {
         String sql = "UPDATE clientes SET endereco = ?, telefone = ?, email = ? WHERE nome = ?";
         try (Connection conn = GerenciadorBancoDados.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setString(1, cliente.getEndereco());
             pstmt.setString(2, cliente.getTelefone());
             pstmt.setString(3, cliente.getEmail());
             pstmt.setString(4, cliente.getNome());
-            pstmt.executeUpdate();
+
+            int linhasAfetadas = pstmt.executeUpdate();
+            return linhasAfetadas > 0;
+
         } catch (SQLException e) {
             System.err.println("Erro ao atualizar cliente: " + e.getMessage());
+            return false;
         }
     }
 
-    public void deletarPorNome(String nome) {
-
+    public boolean deletarPorNome(String nome) {
         String sql = "DELETE FROM clientes WHERE nome = ?";
         try (Connection conn = GerenciadorBancoDados.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, nome);
-            pstmt.executeUpdate();
-
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;
         } catch (SQLException e) {
             System.err.println("Erro ao deletar cliente: " + e.getMessage());
+            return false;
         }
     }
 

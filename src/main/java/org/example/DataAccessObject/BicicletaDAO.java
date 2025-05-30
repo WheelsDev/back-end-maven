@@ -3,6 +3,7 @@ package org.example.DataAccessObject;
 import org.example.Models.Bicicleta;
 import org.example.Util.GerenciadorBancoDados;
 import org.springframework.stereotype.Repository;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +89,7 @@ public class BicicletaDAO {
         return null;
     }
 
-    public Bicicleta atualizar(Bicicleta bicicleta) {
+    public boolean atualizar(Bicicleta bicicleta) {
         String sql = "UPDATE bicicletas SET nome = ?, marca = ?, modelo = ?, deposito = ?, tipo = ?, diaria = ?, disponibilidade = ? " +
                 "WHERE numero = ?";
 
@@ -104,17 +105,14 @@ public class BicicletaDAO {
             pstmt.setBoolean(7, bicicleta.isDisponibilidade());
             pstmt.setInt(8, bicicleta.getNumero());
 
-            int rowsAffected = pstmt.executeUpdate();
+            int linhasAfetadas = pstmt.executeUpdate();
 
-            if (rowsAffected > 0) {
-                return bicicleta;
-            }
+            return linhasAfetadas > 0;
 
         } catch (SQLException e) {
             System.err.println("Erro ao atualizar bicicleta: " + e.getMessage());
+            return false;
         }
-
-        return null;
     }
 
     public boolean deletarPorNumero(int numero) {
