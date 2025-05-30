@@ -13,22 +13,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/pagamentos")
+@CrossOrigin(origins = "http://localhost:3000")
 public class PagamentoController {
 
     private final PagamentoDAO pagamentoDAO = new PagamentoDAO();
     @GetMapping("/grafico")
     public List<Pagamento> listarPagamentosParaGrafico() {
         return pagamentoDAO.listarParaGrafico();
-    }
-
-    @GetMapping("/{identificador}")
-    public ResponseEntity<Pagamento> buscarPorContrato(@PathVariable String identificador) {
-        Pagamento pagamento = pagamentoDAO.buscarPorContratoId(identificador);
-        if (pagamento != null) {
-            return ResponseEntity.ok(pagamento);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
     }
 
     @PostMapping("/finalizar/{identificador}")
@@ -48,7 +39,4 @@ public class PagamentoController {
 
         return ResponseEntity.ok().build();
     }
-
-
-
 }

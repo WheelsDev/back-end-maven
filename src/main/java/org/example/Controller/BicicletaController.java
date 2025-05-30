@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/bicicletas")
-@CrossOrigin(origins = "http://localhost:5173") // Porta padrão do Vite
+@CrossOrigin(origins = "http://localhost:3000")
 public class BicicletaController {
 
     @Autowired
@@ -20,15 +20,6 @@ public class BicicletaController {
     public ResponseEntity<List<Bicicleta>> listarTodas() {
         List<Bicicleta> bicicletas = bicicletaDAO.listarTodas();
         return ResponseEntity.ok(bicicletas);
-    }
-
-    @GetMapping("/{numero}")
-    public ResponseEntity<Bicicleta> buscarPorId(@PathVariable int numero) {
-        Bicicleta bicicleta = bicicletaDAO.buscarPorNumero(numero);
-        if (bicicleta != null) {
-            return ResponseEntity.ok(bicicleta);
-        }
-        return ResponseEntity.notFound().build();
     }
 
     @PostMapping
@@ -46,7 +37,6 @@ public class BicicletaController {
         }
         return ResponseEntity.notFound().build();
     }
-
 
     @DeleteMapping("/{numero}")
     public ResponseEntity<Void> deletar(@PathVariable int numero) {

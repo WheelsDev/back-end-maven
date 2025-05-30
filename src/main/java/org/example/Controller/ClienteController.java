@@ -22,15 +22,6 @@ public class ClienteController {
         return ResponseEntity.ok(clientes);
     }
 
-    @GetMapping("/{nome}")
-    public ResponseEntity<Cliente> buscarPorNome(@PathVariable String nome) {
-        Cliente cliente = clienteDAO.buscarPorNome(nome);
-        if (cliente != null) {
-            return ResponseEntity.ok(cliente);
-        }
-        return ResponseEntity.notFound().build();
-    }
-
     @PostMapping
     public ResponseEntity<Cliente> criar(@RequestBody Cliente cliente) {
         Cliente novoCliente = clienteDAO.inserir(cliente);

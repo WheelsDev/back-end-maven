@@ -3,7 +3,6 @@ package org.example.DataAccessObject;
 import org.example.Models.*;
 import org.example.Util.GerenciadorBancoDados;
 import org.springframework.stereotype.Repository;
-
 import java.sql.*;
 import java.time.LocalDate;
 
@@ -49,7 +48,6 @@ public class ContratoDAO {
             pstmt.setString(9, contrato.getStatus().toString());
             pstmt.executeUpdate();
 
-            // Inserir pagamento associado
             Pagamento pagamento = new Pagamento(contrato);
             pagamento.setStatus(contrato.getStatus() == StatusContrato.FINALIZADO
                     ? StatusPagamento.PAGO : StatusPagamento.PENDENTE);

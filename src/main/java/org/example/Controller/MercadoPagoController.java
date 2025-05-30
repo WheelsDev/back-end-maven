@@ -3,18 +3,18 @@ package org.example.Controller;
 import org.example.DataAccessObject.ContratoDAO;
 import org.example.Integration.MercadoPagoService;
 import org.example.Models.Contrato;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/checkout")
 public class MercadoPagoController {
 
     private final ContratoDAO contratoDAO = new ContratoDAO();
-    private final MercadoPagoService mercadoPagoService = new MercadoPagoService();
+    
+    @Autowired
+    private MercadoPagoService mercadoPagoService;
 
     @GetMapping("/gerar/{identificador}")
     public ResponseEntity<String> gerarLinkDePagamento(@PathVariable String identificador) {
@@ -23,8 +23,7 @@ public class MercadoPagoController {
             return ResponseEntity.notFound().build();
         }
 
-        double valorTotal = contrato.getNumeroDias() * contrato.getBicicleta().getDiariaTaxaAluguel()
-                + contrato.getBicicleta().getDeposito();
+        double valorTotal = contrato.getNumeroDias() * contrato.getBicicleta().getDiariaTaxaAluguel();
 
         try {
             String link = mercadoPagoService.criarPagamento(contrato, valorTotal);
@@ -34,4 +33,3 @@ public class MercadoPagoController {
         }
     }
 }
-
