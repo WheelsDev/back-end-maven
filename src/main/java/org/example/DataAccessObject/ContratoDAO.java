@@ -5,6 +5,8 @@ import org.example.Util.GerenciadorBancoDados;
 import org.springframework.stereotype.Repository;
 import java.sql.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class ContratoDAO {
@@ -141,4 +143,57 @@ public class ContratoDAO {
             return false;
         }
     }
+
+    public List<Contrato> listarTodos() {
+        List<Contrato> contratos = new ArrayList<>();
+        String sql = "SELECT * FROM contratos";
+
+        try (Connection conn = GerenciadorBancoDados.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                Contrato contrato = new Contrato();
+                contrato.setIdentificador(rs.getString("identificador"));
+
+                Cliente cliente = new Cliente();
+                cliente.setNome(rs.getString("cliente"));
+                contrato.setCliente(cliente);
+
+                Bicicleta bicicleta = new Bicicleta();
+                bicicleta.setNome(rs.getString("bicicleta"));
+                contrato.setBicicleta(bicicleta);
+
+                contrato.setDataInicial(LocalDate.parse(rs.getString("data_inicio")));
+                contrato.setDataRetorno(LocalDate.parse(rs.getString("data_retorno")));
+                contrato.setTaxaAtraso(rs.getDouble("taxa_atraso"));
+                contrato.setTaxaDano(rs.getDouble("taxa_dano"));
+                contrato.setNumeroDias(rs.getInt("dias"));
+                contrato.setStatus(StatusContrato.valueOf(rs.getString("status")));
+
+                contratos.add(contrato);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao listar contratos: " + e.getMessage());
+        }
+
+        return contratos;
+    }
+
+    public int contar() {
+        String sql = "SELECT COUNT(*) FROM contratos";
+        try (Connection conn = GerenciadorBancoDados.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
 }

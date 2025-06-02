@@ -2,30 +2,30 @@ package org.example.Models;
 
 public class Usuario {
 
-    private String Email;
-    private String Senha;
+    private String email;
+    private String senha;
     private TipoUsuario tipo;
 
     public Usuario(String email, String senha, TipoUsuario tipo) {
-        Email = email;
-        Senha = senha;
+        this.email = email;
+        this.senha = senha;
         this.tipo = tipo;
     }
 
     public String getEmail() {
-        return Email;
+        return email;
     }
 
     public void setEmail(String email) {
-        Email = email;
+        this.email = email;
     }
 
     public String getSenha() {
-        return Senha;
+        return senha;
     }
 
     public void setSenha(String senha) {
-        Senha = senha;
+        this.senha = senha;
     }
 
     public TipoUsuario getTipo() {

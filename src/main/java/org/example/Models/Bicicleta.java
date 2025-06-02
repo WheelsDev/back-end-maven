@@ -16,7 +16,7 @@ public class Bicicleta {
     public Bicicleta() {}
 
     public Bicicleta(String nome, String marca, String modelo, double deposito, String tipo, double diariaTaxaAluguel , boolean disponibilidade) {
-        numero = new Random().nextInt(10000);
+        numero = Integer.parseInt(null);
         this.nome = nome;
         this.deposito = deposito;
         this.diariaTaxaAluguel = diariaTaxaAluguel;

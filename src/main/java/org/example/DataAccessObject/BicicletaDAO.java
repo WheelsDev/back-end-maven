@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Repository
 public class BicicletaDAO {
@@ -42,6 +43,9 @@ public class BicicletaDAO {
         try (Connection conn = GerenciadorBancoDados.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
+            int numero = 10000 + new Random().nextInt(90000);
+            bicicleta.setNumero(numero);
+
             pstmt.setInt(1, bicicleta.getNumero());
             pstmt.setString(2, bicicleta.getNome());
             pstmt.setString(3, bicicleta.getMarca());
@@ -58,35 +62,6 @@ public class BicicletaDAO {
             System.err.println("Erro ao inserir bicicleta: " + e.getMessage());
             return null;
         }
-    }
-
-    public Bicicleta buscarPorNumero(int numero) {
-        String sql = "SELECT * FROM bicicletas WHERE numero = ?";
-
-        try (Connection conn = GerenciadorBancoDados.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, numero);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                Bicicleta bicicleta = new Bicicleta();
-                bicicleta.setNumero(rs.getInt("numero"));
-                bicicleta.setNome(rs.getString("nome"));
-                bicicleta.setMarca(rs.getString("marca"));
-                bicicleta.setModelo(rs.getString("modelo"));
-                bicicleta.setDeposito(rs.getDouble("deposito"));
-                bicicleta.setTipo(rs.getString("tipo"));
-                bicicleta.setDiariaTaxaAluguel(rs.getDouble("diaria"));
-                bicicleta.setDisponibilidade(rs.getBoolean("disponibilidade"));
-                return bicicleta;
-            }
-
-        } catch (SQLException e) {
-            System.err.println("Erro ao buscar bicicleta por número: " + e.getMessage());
-        }
-
-        return null;
     }
 
     public boolean atualizar(Bicicleta bicicleta) {
@@ -158,4 +133,20 @@ public class BicicletaDAO {
 
         return lista;
     }
+
+    public int contar() {
+        String sql = "SELECT COUNT(*) FROM bicicletas";
+        try (Connection conn = GerenciadorBancoDados.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
 }

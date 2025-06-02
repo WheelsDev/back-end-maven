@@ -2,11 +2,15 @@ package org.example.Controller;
 
 import org.example.Models.Bicicleta;
 import org.example.DataAccessObject.BicicletaDAO;
+import org.example.DataAccessObject.ClienteDAO;
+import org.example.DataAccessObject.ContratoDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/bicicletas")
@@ -15,6 +19,12 @@ public class BicicletaController {
 
     @Autowired
     private BicicletaDAO bicicletaDAO;
+
+    @Autowired
+    private ClienteDAO clienteDAO;
+
+    @Autowired
+    private ContratoDAO contratoDAO;
 
     @GetMapping
     public ResponseEntity<List<Bicicleta>> listarTodas() {
@@ -45,5 +55,19 @@ public class BicicletaController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/estatisticas")
+    public Map<String, Integer> getEstatisticas() {
+        int bicicletas = bicicletaDAO.contar();
+        int clientes = clienteDAO.contar();
+        int contratos = contratoDAO.contar();
+
+        Map<String, Integer> response = new HashMap<>();
+        response.put("bicicletas", bicicletas);
+        response.put("clientes", clientes);
+        response.put("contratos", contratos);
+
+        return response;
     }
 }

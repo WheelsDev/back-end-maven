@@ -74,6 +74,7 @@ public class GerarEmail {
             throw new RuntimeException(e);
         }
     }
+
     public void enviarComprovantePagamento(Cliente cliente, Contrato contrato) {
         String arquivoComprovantePagamento = "CDP-" + contrato.getIdentificador() + ".pdf";
         Path caminhoArquivo = Paths.get("src","main","java","org","example","Util",arquivoComprovantePagamento);

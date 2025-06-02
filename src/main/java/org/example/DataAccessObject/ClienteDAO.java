@@ -67,27 +67,6 @@ public class ClienteDAO {
         }
     }
 
-    public Cliente buscarPorNome(String nome) {
-
-        String sql = "SELECT * FROM clientes WHERE LOWER(nome) = LOWER(?)\n";
-        try (Connection conn = GerenciadorBancoDados.conectar();
-            PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1,nome);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                Cliente cliente = new Cliente();
-                cliente.setNome(rs.getString("nome"));
-                cliente.setEndereco(rs.getString("endereco"));
-                cliente.setTelefone(rs.getString("telefone"));
-                cliente.setEmail(rs.getString("email"));
-                return cliente;
-            }
-        } catch (SQLException e) {
-            System.err.println("Erro ao buscar cliente por nome\n" + e.getMessage());
-        }
-        return null;
-    }
-
     public boolean atualizar(Cliente cliente) {
         String sql = "UPDATE clientes SET endereco = ?, telefone = ?, email = ? WHERE nome = ?";
         try (Connection conn = GerenciadorBancoDados.conectar();
@@ -119,5 +98,21 @@ public class ClienteDAO {
             return false;
         }
     }
+
+    public int contar() {
+        String sql = "SELECT COUNT(*) FROM clientes";
+        try (Connection conn = GerenciadorBancoDados.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
 
 }

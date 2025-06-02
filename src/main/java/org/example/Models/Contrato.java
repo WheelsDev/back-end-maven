@@ -7,8 +7,6 @@ import java.util.Scanner;
 
 public class Contrato {
 
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    Scanner leitor = new Scanner(System.in);
     private String identificador;
     private Cliente cliente = null;
     private Bicicleta bicicleta = null;
@@ -29,10 +27,6 @@ public class Contrato {
         numeroDias = numDiasParaAlugar;
         dataRetorno = dataParaAlugar.plusDays(numDiasParaAlugar);
         status = StatusContrato.ATIVO;
-    }
-
-    public void setLeitor(Scanner leitor) {
-        this.leitor = leitor;
     }
 
     public void setIdentificador(String identificador) {
@@ -113,15 +107,13 @@ public class Contrato {
 
     public void danoCausadoABicicleta() {
         System.out.println("Dano causado à bicicleta.");
-        double desconto = bicicleta.getDeposito()*15;
-        taxaDano = desconto;
+        double multa = bicicleta.getDeposito()*15;
+        taxaDano = multa;
     }
 
     public void atrasoAoDevolverBicicleta() {
-        System.out.println("Dias alugados após os dias de contrato: ");
-        int dias = leitor.nextInt();
-        double desconto = 1.20 * (bicicleta.getDiariaTaxaAluguel() * dias);
-        taxaAtraso = desconto;
+        double multa = 1.20 * (bicicleta.getDiariaTaxaAluguel() * numeroDias);
+        taxaAtraso = multa;
     }
 
     public void finalizacaoDoContrato() {

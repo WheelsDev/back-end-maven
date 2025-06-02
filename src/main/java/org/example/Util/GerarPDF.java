@@ -12,16 +12,17 @@ import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
 
 public class GerarPDF {
-    DateTimeFormatter dataFormatada = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+    DateTimeFormatter dataFormatada = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     Font tituloFonte = new Font(Font.FontFamily.HELVETICA, 16,Font.BOLD);
     Font fonteNegrito = new Font(Font.FontFamily.HELVETICA, 14,Font.BOLD);
     Font fonteNormal = new Font(Font.FontFamily.HELVETICA, 12);
     Font fonteMetodosPagamento = new Font(Font.FontFamily.HELVETICA, 12);
-
     LineSeparator linha = new LineSeparator();
     Chunk linhaLaranja = new Chunk(linha);
     BaseColor corLaranja = new BaseColor(0xF8, 0x73, 0x14);
+
+    public GerarPDF() {}
 
     public void gerarContratoAluguel(Contrato contrato) {
         Document document = new Document();

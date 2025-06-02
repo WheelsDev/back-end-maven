@@ -5,11 +5,11 @@ import org.example.Integration.MercadoPagoService;
 import org.example.Models.Bicicleta;
 import org.example.Models.Cliente;
 import org.example.Models.Contrato;
+import org.example.Util.GerarPDF;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +26,8 @@ public class ContratoController {
     @PostMapping
     public ResponseEntity<String> criarContrato(@RequestBody Contrato contrato) {
         boolean sucesso = contratoDAO.inserir(contrato);
+        GerarPDF gerarPDF = new GerarPDF();
+        gerarPDF.gerarContratoAluguel(contrato);
         if (sucesso) {
             return ResponseEntity.status(HttpStatus.CREATED).body("Contrato criado com sucesso.");
         } else {
@@ -35,7 +37,6 @@ public class ContratoController {
 
     @PutMapping("/{identificador}")
     public ResponseEntity<String> atualizarContrato(@PathVariable String identificador, @RequestBody Contrato contratoAtualizado) {
-        // Certifique-se de que o identificador do contratoAtualizado está correto
         contratoAtualizado.setIdentificador(identificador);
         boolean sucesso = contratoDAO.atualizar(contratoAtualizado);
         if (sucesso) {
@@ -57,9 +58,7 @@ public class ContratoController {
 
     @GetMapping
     public ResponseEntity<List<Contrato>> listarContratos() {
-        // Como sua DAO atual não tem método para listar todos, vou criar uma lista vazia por enquanto
-        List<Contrato> contratos = new ArrayList<>();
-        // Aqui você poderia implementar um método contratoDAO.listarTodos()
+        List<Contrato> contratos = contratoDAO.listarTodos();
         return ResponseEntity.ok(contratos);
     }
 

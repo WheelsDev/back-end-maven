@@ -13,7 +13,7 @@ public class Pagamento {
     private double pagamentoEmFalta = 0;
     private StatusPagamento status;
     private String contratoId;
-    private String clienteNome; // apenas para listar pagamentos
+    private String clienteNome;
 
     public String getContratoId() {
         return contratoId;
