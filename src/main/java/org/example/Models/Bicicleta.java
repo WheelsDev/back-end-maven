@@ -8,7 +8,7 @@ public class Bicicleta {
     private String nome;
     private String marca;
     private String modelo;
-    private double deposito = 0;
+    private double deposito;
     private String tipo;
     private double diariaTaxaAluguel = 0;
     private boolean disponibilidade = true;

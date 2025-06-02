@@ -27,11 +27,12 @@ public class GerarPDF {
     public void gerarContratoAluguel(Contrato contrato) {
         Document document = new Document();
         String arquivoContrato = contrato.getIdentificador() + ".pdf";
-        Path caminhoArquivo = Paths.get("src","main","java","org","example","Util",arquivoContrato);
+        Path caminhoArquivo = Paths.get("src", "main", "java", "org", "example", "Util", arquivoContrato);
         try {
             PdfWriter.getInstance(document, new FileOutputStream(caminhoArquivo.toFile()));
             document.open();
 
+            // Cabeçalho com logo e título
             PdfPTable headerTable = new PdfPTable(3);
             headerTable.setWidthPercentage(100);
             headerTable.setWidths(new float[]{15, 70, 15});
@@ -41,10 +42,9 @@ public class GerarPDF {
             logoCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 
             String arquivoImagem = "LogoWheels.png";
-            Path caminhoImagem = Paths.get("src","main","java","org","example","Resources",arquivoImagem);
+            Path caminhoImagem = Paths.get("src", "main", "java", "org", "example", "Resources", arquivoImagem);
             Image logoLoja = Image.getInstance(caminhoImagem.toString());
             logoLoja.scaleToFit(60, 60);
-
             logoCell.addElement(new Chunk(logoLoja, 0, 0, true));
 
             PdfPCell titleCell = new PdfPCell();
@@ -53,7 +53,6 @@ public class GerarPDF {
 
             Paragraph titulo = new Paragraph("CONTRATO DE ALUGUEL DA BICICLETA", tituloFonte);
             titulo.setAlignment(Element.ALIGN_CENTER);
-
             titleCell.addElement(titulo);
 
             PdfPCell emptyCell = new PdfPCell();
@@ -62,9 +61,9 @@ public class GerarPDF {
             headerTable.addCell(logoCell);
             headerTable.addCell(titleCell);
             headerTable.addCell(emptyCell);
-
             document.add(headerTable);
 
+            // Conteúdo principal: dados do cliente e bicicleta
             PdfPTable mainTable = new PdfPTable(2);
             mainTable.setWidthPercentage(100);
             mainTable.setWidths(new float[]{60, 40});
@@ -73,18 +72,16 @@ public class GerarPDF {
             PdfPCell dataCell = new PdfPCell();
             dataCell.setBorder(Rectangle.NO_BORDER);
 
-            Paragraph tituloCliente = new Paragraph(
-                    "CONTRATANTE:\n\n", fonteNegrito);
+            Paragraph tituloCliente = new Paragraph("CONTRATANTE:\n\n", fonteNegrito);
             Paragraph dadosCliente = new Paragraph(
                     "Nome: " + contrato.getCliente().getNome() + "\n" +
-                    "E-mail: " + contrato.getCliente().getEmail() + "\n" +
-                    "Endereço: " + contrato.getCliente().getEndereco() + "\n" +
-                    "Telefone: " + contrato.getCliente().getTelefone() + "\n\n", fonteNormal);
+                            "E-mail: " + contrato.getCliente().getEmail() + "\n" +
+                            "Endereço: " + contrato.getCliente().getEndereco() + "\n" +
+                            "Telefone: " + contrato.getCliente().getTelefone() + "\n\n", fonteNormal);
 
-            Paragraph tituloBike = new Paragraph(
-                    "BICICLETA ALUGADA:\n\n", fonteNegrito);
+            Paragraph tituloBike = new Paragraph("BICICLETA ALUGADA:\n\n", fonteNegrito);
             Paragraph dadosBike = new Paragraph(
-                      "Nome: " + contrato.getBicicleta().getNome() + "\n" +
+                    "Nome: " + contrato.getBicicleta().getNome() + "\n" +
                             "Número: " + contrato.getBicicleta().getNumero() + "\n" +
                             "Modelo: " + contrato.getBicicleta().getModelo() + "\n" +
                             "Marca: " + contrato.getBicicleta().getMarca() + "\n" +
@@ -102,12 +99,12 @@ public class GerarPDF {
             govLogoCell.setPaddingTop(20);
 
             arquivoImagem = "GovernoRioDeJaneiro.png";
-            caminhoImagem = Paths.get("src","main","java","org","example","Resources",arquivoImagem);
+            caminhoImagem = Paths.get("src", "main", "java", "org", "example", "Resources", arquivoImagem);
             Image logoEstado = Image.getInstance(caminhoImagem.toString());
             logoEstado.scaleToFit(150, 150);
 
             arquivoImagem = "PrefeituraRioDeJaneiro.png";
-            caminhoImagem = Paths.get("src","main","java","org","example","Resources",arquivoImagem);
+            caminhoImagem = Paths.get("src", "main", "java", "org", "example", "Resources", arquivoImagem);
             Image logoPrefeitura = Image.getInstance(caminhoImagem.toString());
             logoPrefeitura.scaleToFit(150, 150);
 
@@ -131,35 +128,39 @@ public class GerarPDF {
 
             document.add(mainTable);
 
+            // Linha laranja decorativa
             linha.setLineColor(corLaranja);
             linha.setLineWidth(3);
             document.add(linhaLaranja);
 
-            Font fonteItalico = new Font(Font.FontFamily.HELVETICA, 10,Font.ITALIC);
+            // Cláusulas contratuais
+            Font fonteItalico = new Font(Font.FontFamily.HELVETICA, 10, Font.ITALIC);
             Paragraph clausulas = new Paragraph(
                     "\nO presente contrato tem como objeto a prestação dos seguintes serviços da Wheels LTDA ao CONTRATANTE:\n\n" +
                             "1 - Aluguel de Bicicleta única;\n" +
                             "2 - Aluguel da bicicleta " + contrato.getBicicleta().getNome() + " de número " + contrato.getBicicleta().getNumero() +
                             ", para o cliente " + contrato.getCliente().getNome() + " de e-mail " + contrato.getCliente().getEmail() + ", no período de tempo do dia " +
-                            contrato.getDataInicial().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " até " +
-                            contrato.getDataRetorno().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + ";\n" +
+                            contrato.getDataInicial().format(dataFormatada) + " até " +
+                            contrato.getDataRetorno().format(dataFormatada) + ";\n" +
                             "3 - Caso houver atraso na devolução da bicicleta nos dias previstos, haverá taxa de R$ " +
                             contrato.getTaxaAtraso() + " por dia;\n" +
                             "4 - Em caso de danos à bicicleta, o contratante deverá arcar com os custos equivalentes aos danos\n\n", fonteItalico);
             document.add(clausulas);
             document.add(linhaLaranja);
 
+            // Valor total calculado
             double valorTotal = contrato.getNumeroDias() * contrato.getBicicleta().getDiariaTaxaAluguel() + contrato.getBicicleta().getDeposito();
-            Paragraph tituloValor = new Paragraph("\nVALOR DO CONTRATO:" + valorTotal, fonteNegrito);
+            Paragraph tituloValor = new Paragraph("\nVALOR DO CONTRATO: R$ " + String.format("%.2f", valorTotal), fonteNegrito);
             document.add(tituloValor);
-            Paragraph valor = new Paragraph("\nO valor total dos serviços será de R$ "+valorTotal+", caso houver atraso, haverá um adicional de R$"+valorTotal+" para cada dia a mais de atraso do contrato, caso houver da a ser pago da seguinte forma:" + valorTotal, fonteNormal);
+            Paragraph valor = new Paragraph("\nO valor total dos serviços será de R$ " + String.format("%.2f", valorTotal) +
+                    ", caso houver atraso, haverá um adicional de R$ " + String.format("%.2f", contrato.getTaxaAtraso()) + " para cada dia a mais de atraso do contrato, a ser pago da seguinte forma:", fonteNormal);
             document.add(valor);
 
-            Paragraph metodosPagamento = new Paragraph("\nO pagamento poderá ser realizado via:\n" +
-                    "- Crédito\n- Débito\n- PIX\n- Boleto\n\n", fonteMetodosPagamento);
+            Paragraph metodosPagamento = new Paragraph("\nO pagamento poderá ser realizado via:\n- Crédito\n- Débito\n- PIX\n- Boleto\n\n", fonteMetodosPagamento);
             document.add(metodosPagamento);
 
             document.close();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -167,12 +168,13 @@ public class GerarPDF {
 
     public void gerarComprovantePagamento(Contrato contrato) {
         Document document = new Document();
-        String arquivoComprovantePagamento = "CDP-"+contrato.getIdentificador() + ".pdf";
-        Path caminhoArquivo = Paths.get("src","main","java","org","example","Util",arquivoComprovantePagamento);
+        String arquivoComprovantePagamento = "CDP-" + contrato.getIdentificador() + ".pdf";
+        Path caminhoArquivo = Paths.get("src", "main", "java", "org", "example", "Util", arquivoComprovantePagamento);
         try {
             PdfWriter.getInstance(document, new FileOutputStream(caminhoArquivo.toFile()));
             document.open();
 
+            // Cabeçalho com logo e título
             PdfPTable headerTable = new PdfPTable(3);
             headerTable.setWidthPercentage(100);
             headerTable.setWidths(new float[]{15, 70, 15});
@@ -182,20 +184,17 @@ public class GerarPDF {
             logoCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 
             String arquivoImagem = "LogoWheels.png";
-            Path caminhoImagem = Paths.get("src","main","java","org","example","Resources",arquivoImagem);
+            Path caminhoImagem = Paths.get("src", "main", "java", "org", "example", "Resources", arquivoImagem);
             Image logoLoja = Image.getInstance(caminhoImagem.toString());
             logoLoja.scaleToFit(60, 60);
-
             logoCell.addElement(new Chunk(logoLoja, 0, 0, true));
 
             PdfPCell titleCell = new PdfPCell();
             titleCell.setBorder(Rectangle.NO_BORDER);
             titleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 
-            Font tituloFonte = new Font(Font.FontFamily.HELVETICA, 16,Font.BOLD);
             Paragraph titulo = new Paragraph("COMPROVANTE DE PAGAMENTO", tituloFonte);
             titulo.setAlignment(Element.ALIGN_CENTER);
-
             titleCell.addElement(titulo);
 
             PdfPCell emptyCell = new PdfPCell();
@@ -204,177 +203,123 @@ public class GerarPDF {
             headerTable.addCell(logoCell);
             headerTable.addCell(titleCell);
             headerTable.addCell(emptyCell);
-
             document.add(headerTable);
 
+            // Dados do cliente e bicicleta
             PdfPTable mainTable = new PdfPTable(2);
             mainTable.setWidthPercentage(100);
             mainTable.setWidths(new float[]{60, 40});
             mainTable.setSpacingBefore(30);
 
-            PdfPCell tabelaLado1 = new PdfPCell();
-            tabelaLado1.setBorder(Rectangle.NO_BORDER);
+            PdfPCell infoCell = new PdfPCell();
+            infoCell.setBorder(Rectangle.NO_BORDER);
 
-            Paragraph tituloDeLoja = new Paragraph(
-                    "DE:\n", fonteNegrito);
-            Paragraph dadosLoja = new Paragraph(
-                    "Wheels LTDA\n" +
-                            "Rio de Janeiro, Centro\n" +
-                            "(21) 99254-4146\n", fonteNormal);
+            Paragraph tituloCliente = new Paragraph("CONTRATANTE:\n\n", fonteNegrito);
+            Paragraph dadosCliente = new Paragraph(
+                    "Nome: " + contrato.getCliente().getNome() + "\n" +
+                            "E-mail: " + contrato.getCliente().getEmail() + "\n" +
+                            "Endereço: " + contrato.getCliente().getEndereco() + "\n" +
+                            "Telefone: " + contrato.getCliente().getTelefone() + "\n\n", fonteNormal);
 
-            Paragraph tituloCobrar = new Paragraph(
-                    "COBRAR A:\n", fonteNegrito);
-            Paragraph dadosCobrar = new Paragraph(
-                    contrato.getCliente().getNome()+"\n" +
-                            contrato.getCliente().getEndereco()+"\n" +
-                            contrato.getCliente().getTelefone()+"\n", fonteNormal);
-            tabelaLado1.addElement(tituloDeLoja);
-            tabelaLado1.addElement(dadosLoja);
-            tabelaLado1.addElement(tituloCobrar);
-            tabelaLado1.addElement(dadosCobrar);
+            Paragraph tituloBike = new Paragraph("BICICLETA ALUGADA:\n\n", fonteNegrito);
+            Paragraph dadosBike = new Paragraph(
+                    "Nome: " + contrato.getBicicleta().getNome() + "\n" +
+                            "Número: " + contrato.getBicicleta().getNumero() + "\n" +
+                            "Modelo: " + contrato.getBicicleta().getModelo() + "\n" +
+                            "Marca: " + contrato.getBicicleta().getMarca() + "\n" +
+                            "Tipo: " + contrato.getBicicleta().getTipo() + "\n\n", fonteNormal);
 
-            PdfPCell tabelaLado2 = new PdfPCell();
-            tabelaLado2.setBorder(Rectangle.NO_BORDER);
-            tabelaLado2.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            tabelaLado2.setVerticalAlignment(Element.ALIGN_TOP);
+            infoCell.addElement(tituloCliente);
+            infoCell.addElement(dadosCliente);
+            infoCell.addElement(tituloBike);
+            infoCell.addElement(dadosBike);
 
-            Paragraph tituloRecibo = new Paragraph(
-                    "RECIBO # CDP-"+contrato.getIdentificador()+"\n", fonteNormal);
-            Paragraph dadosRecibo = new Paragraph(
-                    "DATA DO RECIBO "+contrato.getDataInicial().format(dataFormatada) +"\n" +
-                            "P.O # CON-"+contrato.getIdentificador()+"\n" +
-                            "DATA DE VENCIMENTO "+contrato.getDataRetorno().format(dataFormatada)+"\n", fonteNormal);
+            PdfPCell govLogoCell = new PdfPCell();
+            govLogoCell.setBorder(Rectangle.NO_BORDER);
+            govLogoCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            govLogoCell.setVerticalAlignment(Element.ALIGN_TOP);
+            govLogoCell.setPaddingTop(20);
 
-            Paragraph tituloEnviarPara = new Paragraph(
-                    "ENVIAR PARA\n", fonteNegrito);
-            Paragraph dadosEnviarPara = new Paragraph(
-                    contrato.getCliente().getNome()+"\n" +
-                            contrato.getCliente().getEndereco()+"\n" +
-                            contrato.getCliente().getTelefone()+"\n", fonteNormal);
+            arquivoImagem = "GovernoRioDeJaneiro.png";
+            caminhoImagem = Paths.get("src", "main", "java", "org", "example", "Resources", arquivoImagem);
+            Image logoEstado = Image.getInstance(caminhoImagem.toString());
+            logoEstado.scaleToFit(150, 150);
 
-            tabelaLado2.addElement(tituloRecibo);
-            tabelaLado2.addElement(dadosRecibo);
-            tabelaLado2.addElement(tituloEnviarPara);
-            tabelaLado2.addElement(dadosEnviarPara);
+            arquivoImagem = "PrefeituraRioDeJaneiro.png";
+            caminhoImagem = Paths.get("src", "main", "java", "org", "example", "Resources", arquivoImagem);
+            Image logoPrefeitura = Image.getInstance(caminhoImagem.toString());
+            logoPrefeitura.scaleToFit(150, 150);
 
-            mainTable.addCell(tabelaLado1);
-            mainTable.addCell(tabelaLado2);
+            PdfPTable logoTable = new PdfPTable(1);
+            logoTable.setWidthPercentage(100);
+
+            PdfPCell estadoCell = new PdfPCell(new Phrase(new Chunk(logoEstado, 0, 0, true)));
+            estadoCell.setBorder(Rectangle.NO_BORDER);
+            estadoCell.setPaddingBottom(30);
+
+            PdfPCell prefeituraCell = new PdfPCell(new Phrase(new Chunk(logoPrefeitura, 0, 0, true)));
+            prefeituraCell.setBorder(Rectangle.NO_BORDER);
+
+            logoTable.addCell(estadoCell);
+            logoTable.addCell(prefeituraCell);
+
+            govLogoCell.addElement(logoTable);
+
+            mainTable.addCell(infoCell);
+            mainTable.addCell(govLogoCell);
 
             document.add(mainTable);
 
-            Paragraph textoEspaco = new Paragraph("\n");
-            document.add(textoEspaco);
+            // Linha laranja
             linha.setLineColor(corLaranja);
             linha.setLineWidth(3);
             document.add(linhaLaranja);
 
-            document.add(textoEspaco);
-            document.add(textoEspaco);
+            // Descrição do pagamento
+            Paragraph descPagamento = new Paragraph(
+                    "\nO pagamento do valor referente ao aluguel da bicicleta " +
+                            contrato.getBicicleta().getNome() + " (nº " + contrato.getBicicleta().getNumero() +
+                            ") no período de " + contrato.getNumeroDias() + " dias foi efetuado com sucesso.\n\n", fonteNormal);
+            document.add(descPagamento);
 
-            PdfPTable tabelaDescricaoPrecoValor = new PdfPTable(3);
-            tabelaDescricaoPrecoValor.setWidthPercentage(100);
-            tabelaDescricaoPrecoValor.setWidths(new float[]{40, 40, 20});
+            // Tabela resumo do pagamento
+            PdfPTable tabelaValores = new PdfPTable(3);
+            tabelaValores.setWidthPercentage(100);
+            tabelaValores.setWidths(new float[]{50, 30, 20});
 
-            Paragraph linhaTitulo = new Paragraph("DESCRIÇÃO",fonteNegrito);
-            tabelaDescricaoPrecoValor.addCell(linhaTitulo);
-            linhaTitulo = new Paragraph("PREÇO",fonteNegrito);
-            tabelaDescricaoPrecoValor.addCell(linhaTitulo);
-            linhaTitulo = new Paragraph("VALOR",fonteNegrito);
-            tabelaDescricaoPrecoValor.addCell(linhaTitulo);
+            tabelaValores.addCell(new PdfPCell(new Paragraph("Descrição", fonteNegrito)));
+            tabelaValores.addCell(new PdfPCell(new Paragraph("Preço", fonteNegrito)));
+            tabelaValores.addCell(new PdfPCell(new Paragraph("Valor", fonteNegrito)));
 
-            Paragraph linha1 = new Paragraph(" • "+contrato.getBicicleta().getNome(),fonteNormal);
-            tabelaDescricaoPrecoValor.addCell(linha1);
-            linha1 = new Paragraph(contrato.getBicicleta().getDeposito() + " + " + contrato.getBicicleta().getDiariaTaxaAluguel() + " / dia ("+contrato.getNumeroDias()+")" ,fonteNormal);
-            tabelaDescricaoPrecoValor.addCell(linha1);
-            linha1 = new Paragraph("123,00",fonteNormal);
-            tabelaDescricaoPrecoValor.addCell(linha1);
+            double valorDiaria = contrato.getBicicleta().getDiariaTaxaAluguel() * contrato.getNumeroDias();
+            double deposito = contrato.getBicicleta().getDeposito();
+            double taxaAtrasoTotal = contrato.getTaxaAtraso() * 2; // Exemplo: 2 dias de atraso
+            double taxaDano = contrato.getTaxaDano();
+            double total = valorDiaria + deposito + taxaAtrasoTotal + taxaDano;
 
-            Paragraph linha2 = new Paragraph(" • Atraso na Devolução",fonteNormal);
-            tabelaDescricaoPrecoValor.addCell(linha2);
-            linha2 = new Paragraph(contrato.getTaxaAtraso()+" / dia (2 dias)",fonteNormal);
-            tabelaDescricaoPrecoValor.addCell(linha2);
-            linha2 = new Paragraph("121,00",fonteNormal);
-            tabelaDescricaoPrecoValor.addCell(linha2);
+            tabelaValores.addCell(new Paragraph(String.format("Depósito + diária R$ %.2f + R$ %.2f/dia (%d dias)", deposito, contrato.getBicicleta().getDiariaTaxaAluguel(), contrato.getNumeroDias()), fonteNormal));
+            tabelaValores.addCell(new Paragraph("-", fonteNormal));
+            tabelaValores.addCell(new Paragraph(String.format("R$ %.2f", valorDiaria + deposito), fonteNormal));
 
-            Paragraph linha3 = new Paragraph(" • Danos à bicicleta",fonteNormal);
-            tabelaDescricaoPrecoValor.addCell(linha3);
-            linha3 = new Paragraph(contrato.getTaxaDano()+" taxa fixa de dano",fonteNormal);
-            tabelaDescricaoPrecoValor.addCell(linha3);
-            linha3 = new Paragraph(contrato.getTaxaDano()+"",fonteNormal);
-            tabelaDescricaoPrecoValor.addCell(linha3);
+            tabelaValores.addCell(new Paragraph("Taxa de atraso (2 dias)", fonteNormal));
+            tabelaValores.addCell(new Paragraph(String.format("R$ %.2f / dia", contrato.getTaxaAtraso()), fonteNormal));
+            tabelaValores.addCell(new Paragraph(String.format("R$ %.2f", taxaAtrasoTotal), fonteNormal));
 
-            Paragraph linhaValor = new Paragraph("TOTAL",fonteNegrito);
-            tabelaDescricaoPrecoValor.addCell(linhaValor);
-            linhaValor = new Paragraph("",fonteNormal);
-            tabelaDescricaoPrecoValor.addCell(linhaValor);
-            linhaValor = new Paragraph("R$ 443,00",fonteNormal);
-            tabelaDescricaoPrecoValor.addCell(linhaValor);
+            tabelaValores.addCell(new Paragraph("Taxa de danos", fonteNormal));
+            tabelaValores.addCell(new Paragraph("-", fonteNormal));
+            tabelaValores.addCell(new Paragraph(String.format("R$ %.2f", taxaDano), fonteNormal));
 
-            document.add(tabelaDescricaoPrecoValor);
+            tabelaValores.addCell(new Paragraph("Total", fonteNegrito));
+            tabelaValores.addCell(new Paragraph("-", fonteNegrito));
+            tabelaValores.addCell(new Paragraph(String.format("R$ %.2f", total), fonteNegrito));
 
-            document.add(textoEspaco);
-
-            Paragraph metodoPagamento = new Paragraph("Método de pagamento: Pix",fonteNegrito);
-            document.add(metodoPagamento);
-
-            document.add(textoEspaco);
-            document.add(textoEspaco);
-
-            PdfPTable tabelaPagoDevolver = new PdfPTable(2);
-            tabelaPagoDevolver.setWidthPercentage(100);
-            tabelaPagoDevolver.setWidths(new float[]{70,30});
-            tabelaPagoDevolver.setPaddingTop(100);
-
-            Paragraph linhaPago = new Paragraph("TOTAL PAGO",fonteNegrito);
-            tabelaPagoDevolver.addCell(linhaPago);
-            linhaPago = new Paragraph("R$ 443,00",fonteNormal);
-            tabelaPagoDevolver.addCell(linhaPago);
-
-            Paragraph linhaDevolvido = new Paragraph("DEVOLVER",fonteNegrito);
-            tabelaPagoDevolver.addCell(linhaDevolvido);
-            linhaDevolvido = new Paragraph("R$ 0,00",fonteNormal);
-            tabelaPagoDevolver.addCell(linhaDevolvido);
-
-            document.add(tabelaPagoDevolver);
-
-            PdfPTable tabelaAssinatura = new PdfPTable(2);
-            tabelaAssinatura.setWidthPercentage(100);
-            tabelaAssinatura.setWidths(new float[]{65,35});
-
-            PdfPCell cedulaVazia = new PdfPCell();
-            cedulaVazia.setBorder(Rectangle.NO_BORDER);
-
-            PdfPCell cedulaAssinatura = new PdfPCell();
-            cedulaAssinatura.setBorder(Rectangle.NO_BORDER);
-            cedulaAssinatura.setVerticalAlignment(Element.ALIGN_MIDDLE);
-
-            arquivoImagem = "assinaturaWheelsLTDA.png";
-            caminhoImagem = Paths.get("src","main","java","org","example","Resources",arquivoImagem);
-            Image assinaturaFoto = Image.getInstance(caminhoImagem.toString());
-            assinaturaFoto.scaleToFit(160, 160);
-
-            cedulaAssinatura.addElement(new Chunk(assinaturaFoto, 0, 0, true));
-
-            tabelaAssinatura.addCell(cedulaVazia);
-            tabelaAssinatura.addCell(cedulaAssinatura);
-            document.add(textoEspaco);
-
-            document.add(tabelaAssinatura);
-
-            document.add(linhaLaranja);
-
-            document.add(textoEspaco);
-            document.add(textoEspaco);
-
-            Paragraph termosTitulo = new Paragraph("TERMOS E CONDIÇÕES",fonteNegrito);
-            document.add(termosTitulo);
-
-            Paragraph termosConteudo = new Paragraph("Banco, Mercado Pago\nIBAN: PT32 2573 7284\nCNPJ: 17.2843.1883-79",fonteNormal);
-            document.add(termosConteudo);
+            document.add(tabelaValores);
 
             document.close();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 }

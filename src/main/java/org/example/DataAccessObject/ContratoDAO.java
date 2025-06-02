@@ -39,6 +39,9 @@ public class ContratoDAO {
         try (Connection conn = GerenciadorBancoDados.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
+            String identificador = contrato.gerarIdentificador();
+            contrato.setIdentificador(identificador);
+
             pstmt.setString(1, contrato.getIdentificador());
             pstmt.setString(2, contrato.getCliente().getNome());
             pstmt.setString(3, contrato.getBicicleta().getNome());
@@ -47,6 +50,9 @@ public class ContratoDAO {
             pstmt.setDouble(6, contrato.getTaxaAtraso());
             pstmt.setDouble(7, contrato.getTaxaDano());
             pstmt.setInt(8, contrato.getNumeroDias());
+            if (contrato.getStatus() == null) {
+                contrato.setStatus(StatusContrato.ATIVO);
+            }
             pstmt.setString(9, contrato.getStatus().toString());
             pstmt.executeUpdate();
 

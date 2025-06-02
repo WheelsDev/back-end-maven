@@ -90,6 +90,34 @@ public class BicicletaDAO {
         }
     }
 
+    public Bicicleta buscarPorNumero(int numero) {
+        String sql = "SELECT * FROM bicicletas WHERE numero = ?";
+
+        try (Connection conn = GerenciadorBancoDados.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, numero);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    Bicicleta bicicleta = new Bicicleta();
+                    bicicleta.setNumero(rs.getInt("numero"));
+                    bicicleta.setNome(rs.getString("nome"));
+                    bicicleta.setMarca(rs.getString("marca"));
+                    bicicleta.setModelo(rs.getString("modelo"));
+                    bicicleta.setDeposito(rs.getDouble("deposito"));
+                    bicicleta.setTipo(rs.getString("tipo"));
+                    bicicleta.setDiariaTaxaAluguel(rs.getDouble("diaria"));
+                    bicicleta.setDisponibilidade(rs.getBoolean("disponibilidade"));
+                    return bicicleta;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar bicicleta por número: " + e.getMessage());
+        }
+        return null;
+    }
+
     public boolean deletarPorNumero(int numero) {
         String sql = "DELETE FROM bicicletas WHERE numero = ?";
 

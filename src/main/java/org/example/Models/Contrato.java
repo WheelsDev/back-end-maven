@@ -1,7 +1,10 @@
 package org.example.Models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -10,22 +13,25 @@ public class Contrato {
     private String identificador;
     private Cliente cliente = null;
     private Bicicleta bicicleta = null;
-    private LocalDate dataInicial = null;
-    private int numeroDias = 0;
-    private LocalDate dataRetorno = null;
+    private LocalDate dataInicial = LocalDate.now();
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate dataRetorno;
+    private int numeroDias;
+    double valorDeposito = 0;
     private double taxaAtraso = 0;
     private double taxaDano = 0;
-    private StatusContrato status;
+    private StatusContrato status = StatusContrato.ATIVO;
 
     public Contrato() {}
 
-    public Contrato(Cliente cliente, Bicicleta bicicleta, LocalDate dataParaAlugar, int numDiasParaAlugar){
+    public Contrato(Cliente cliente, Bicicleta bicicleta, LocalDate dataRetorno){
         identificador = gerarIdentificador();
         this.cliente = cliente;
         this.bicicleta = bicicleta;
-        dataInicial = dataParaAlugar;
-        numeroDias = numDiasParaAlugar;
-        dataRetorno = dataParaAlugar.plusDays(numDiasParaAlugar);
+        this.dataInicial = LocalDate.now();
+        this.valorDeposito = bicicleta.getDeposito();
+        this.dataRetorno = dataRetorno;
+        numeroDias = (int) ChronoUnit.DAYS.between(dataInicial, dataRetorno);
         status = StatusContrato.ATIVO;
     }
 
@@ -51,6 +57,10 @@ public class Contrato {
 
     public void setDataRetorno(LocalDate dataRetorno) {
         this.dataRetorno = dataRetorno;
+
+        if (dataInicial != null && this.dataRetorno != null) {
+            this.numeroDias = (int) ChronoUnit.DAYS.between(dataInicial, this.dataRetorno);
+        }
     }
 
     public void setTaxaAtraso(double taxaAtraso) {
@@ -101,7 +111,7 @@ public class Contrato {
         return identificador;
     }
 
-    private String gerarIdentificador() {
+    public String gerarIdentificador() {
         return "CON-" + new Random().nextInt(10000);
     }
 
