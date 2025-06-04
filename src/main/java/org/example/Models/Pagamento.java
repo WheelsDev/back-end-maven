@@ -30,15 +30,13 @@ public class Pagamento {
         double deposito = contrato.getBicicleta().getDeposito();
         int dias = contrato.getNumeroDias();
         this.valorTotal = (diaria * dias) + deposito;
-
         if (contrato.getStatus() == StatusContrato.FINALIZADO) {
             this.valorPago = diaria * dias;
         } else if (contrato.getStatus() == StatusContrato.ATIVO) {
-            this.valorPago = contrato.valorDeposito;
+            this.valorPago = contrato.getValorDeposito(contrato.getBicicleta());
         } else {
             this.valorPago = 0;
         }
-
         this.pagamentoEmFalta = valorTotal - valorPago;
         this.status = (pagamentoEmFalta <= 0) ? StatusPagamento.PAGO : StatusPagamento.PENDENTE;
     }

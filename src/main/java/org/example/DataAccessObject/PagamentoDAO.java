@@ -52,7 +52,8 @@ public class PagamentoDAO {
     public List<Pagamento> listarParaGrafico() {
 
         List<Pagamento> lista = new ArrayList<>();
-        String sql = "SELECT contrato_id, cliente, valor_total, data_pagamento, status FROM pagamentos";
+        String sql = "SELECT contrato_id, cliente, valor_total, valor_pago, valor_em_aberto, data_pagamento, status FROM pagamentos";
+
         try (Connection conn = GerenciadorBancoDados.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
@@ -61,6 +62,7 @@ public class PagamentoDAO {
                 p.setContratoId(rs.getString("contrato_id"));
                 p.setClienteNome(rs.getString("cliente"));
                 p.setValorTotal(rs.getDouble("valor_total"));
+                p.setPagamentoEmFalta(rs.getDouble("valor_em_aberto"));
                 p.setDataPagamento(LocalDate.parse(rs.getString("data_pagamento")));
                 p.setStatus(StatusPagamento.valueOf(rs.getString("status")));
                 lista.add(p);

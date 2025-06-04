@@ -17,7 +17,8 @@ public class Contrato {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dataRetorno;
     private int numeroDias;
-    double valorDeposito = 0;
+    private double valorDeposito;
+    //private double valorDeposito2 = bicicleta.getDeposito();
     private double taxaAtraso = 0;
     private double taxaDano = 0;
     private StatusContrato status = StatusContrato.ATIVO;
@@ -29,8 +30,8 @@ public class Contrato {
         this.cliente = cliente;
         this.bicicleta = bicicleta;
         this.dataInicial = LocalDate.now();
-        this.valorDeposito = bicicleta.getDeposito();
         this.dataRetorno = dataRetorno;
+        this.valorDeposito = bicicleta.getDeposito();
         numeroDias = (int) ChronoUnit.DAYS.between(dataInicial, dataRetorno);
         status = StatusContrato.ATIVO;
     }
@@ -109,6 +110,10 @@ public class Contrato {
 
     public String getIdentificador() {
         return identificador;
+    }
+
+    public double getValorDeposito(Bicicleta bicicleta) {
+        return valorDeposito = bicicleta.getDeposito();
     }
 
     public String gerarIdentificador() {

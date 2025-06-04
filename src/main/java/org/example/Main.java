@@ -1,13 +1,5 @@
 package org.example;
 
-import org.example.DataAccessObject.ClienteDAO;
-import org.example.DataAccessObject.PagamentoDAO;
-import org.example.DataAccessObject.UsuarioDAO;
-import org.example.Models.Bicicleta;
-import org.example.DataAccessObject.BicicletaDAO;
-import org.example.Models.Cliente;
-import org.example.Models.TipoUsuario;
-import org.example.Models.Usuario;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -15,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class Main {
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);
+        //inicializarUsuarios();
     }
 
     /*public static void inicializarUsuarios() {

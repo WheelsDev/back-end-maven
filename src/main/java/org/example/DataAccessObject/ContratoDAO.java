@@ -22,6 +22,7 @@ public class ContratoDAO {
                     "bicicleta TEXT NOT NULL, " +
                     "data_inicio DATE NOT NULL, " +
                     "data_retorno DATE NOT NULL, " +
+                    "deposito REAL NOT NULL, " +
                     "taxa_atraso REAL NOT NULL, " +
                     "taxa_dano REAL NOT NULL, " +
                     "dias INTEGER NOT NULL, " +
@@ -34,7 +35,7 @@ public class ContratoDAO {
 
     public boolean inserir(Contrato contrato) {
         String sql = "INSERT INTO contratos (identificador, cliente, bicicleta, data_inicio, " +
-                "data_retorno, taxa_atraso, taxa_dano, dias, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "data_retorno, deposito, taxa_atraso, taxa_dano, dias, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = GerenciadorBancoDados.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -47,13 +48,14 @@ public class ContratoDAO {
             pstmt.setString(3, contrato.getBicicleta().getNome());
             pstmt.setString(4, contrato.getDataInicial().toString());
             pstmt.setString(5, contrato.getDataRetorno().toString());
-            pstmt.setDouble(6, contrato.getTaxaAtraso());
-            pstmt.setDouble(7, contrato.getTaxaDano());
-            pstmt.setInt(8, contrato.getNumeroDias());
+            pstmt.setDouble(6, contrato.getValorDeposito(contrato.getBicicleta()));
+            pstmt.setDouble(7, contrato.getTaxaAtraso());
+            pstmt.setDouble(8, contrato.getTaxaDano());
+            pstmt.setInt(9, contrato.getNumeroDias());
             if (contrato.getStatus() == null) {
                 contrato.setStatus(StatusContrato.ATIVO);
             }
-            pstmt.setString(9, contrato.getStatus().toString());
+            pstmt.setString(10, contrato.getStatus().toString());
             pstmt.executeUpdate();
 
             Pagamento pagamento = new Pagamento(contrato);
@@ -168,6 +170,7 @@ public class ContratoDAO {
 
                 Bicicleta bicicleta = new Bicicleta();
                 bicicleta.setNome(rs.getString("bicicleta"));
+                bicicleta.setDeposito(rs.getDouble("deposito"));
                 contrato.setBicicleta(bicicleta);
 
                 contrato.setDataInicial(LocalDate.parse(rs.getString("data_inicio")));
