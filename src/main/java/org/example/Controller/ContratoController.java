@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,9 +31,10 @@ public class ContratoController {
 
     @PostMapping
     public ResponseEntity<String> criarContrato(@RequestBody Contrato contrato) {
-
         BicicletaDAO bicicletaDAO = new BicicletaDAO();
         Bicicleta bicicletaNoBanco = bicicletaDAO.buscarPorNumero(contrato.getBicicleta().getNumero());
+        GerarPDF gerarPDF = new GerarPDF();
+        GerarEmail gerarEmail = new GerarEmail();
 
         if (contrato.getCliente() == null || contrato.getCliente().getNome() == null) {
             System.err.println("Cliente não pode ser nulo");
@@ -48,7 +52,13 @@ public class ContratoController {
         boolean sucesso = contratoDAO.inserir(contrato);
 
         if (sucesso) {
-
+            gerarPDF.gerarContratoAluguel(contrato);
+            gerarEmail.enviarContratoDeAluguel(contrato.getCliente(),contrato);
+            try {
+                Files.delete(Paths.get("src", "main", "java", "org", "example", "Util", contrato.getIdentificador() + ".pdf"));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
             bicicletaNoBanco.setDisponibilidade(false);
             bicicletaDAO.atualizar(bicicletaNoBanco);
 
@@ -57,7 +67,6 @@ public class ContratoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao criar contrato.");
         }
     }
-
 
     @PutMapping("/{identificador}")
     public ResponseEntity<String> atualizarContrato(@PathVariable String identificador, @RequestBody Contrato contratoAtualizado) {
@@ -88,6 +97,10 @@ public class ContratoController {
 
     @Autowired
     private MercadoPagoService mercadoPagoService;
+
+    public void visualizarContrato () {
+
+    }
 
     /*@GetMapping("/teste-pagamento")
     public ResponseEntity<Map<String, Object>> testePagamento() {
