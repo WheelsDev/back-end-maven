@@ -96,7 +96,7 @@ public class ContratoDAO {
                 bicicleta.setNome(rs.getString("nome"));
                 bicicleta.setMarca(rs.getString("marca"));
                 bicicleta.setModelo(rs.getString("modelo"));
-                bicicleta.setDiariaTaxaAluguel(rs.getDouble("diaria_taxa_aluguel"));
+                bicicleta.setDiariaTaxaAluguel(rs.getDouble("diaria"));
                 bicicleta.setTipo(rs.getString("tipo"));
                 bicicleta.setDeposito(rs.getDouble("deposito"));
                 bicicleta.setDisponibilidade(rs.getBoolean("disponibilidade"));

@@ -32,9 +32,9 @@ public class MercadoPagoService {
                     .build();
 
             PreferenceBackUrlsRequest backUrls = PreferenceBackUrlsRequest.builder()
-                    .success("https://www.mercadopago.com.br")
-                    .failure("https://www.mercadopago.com.br")
-                    .pending("https://www.mercadopago.com.br")
+                    .success("https://seusite.com/pagamento/sucesso")
+                    .failure("https://seusite.com/pagamento/falha")
+                    .pending("https://seusite.com/pagamento/pendente")
                     .build();
 
             PreferencePaymentMethodsRequest paymentMethods = PreferencePaymentMethodsRequest.builder()
@@ -47,14 +47,14 @@ public class MercadoPagoService {
                     .payer(payer)
                     .externalReference(contrato.getIdentificador())
                     .backUrls(backUrls)
-                    .notificationUrl("https://www.example.com/webhook/mercadopago")
+                    .notificationUrl("http://localhost:8080/webhook/mercadopago")
                     .paymentMethods(paymentMethods)
                     .build();
 
             PreferenceClient client = new PreferenceClient();
             Preference preference = client.create(preferenceRequest);
 
-            return preference.getSandboxInitPoint();
+            return preference.getInitPoint();
 
         } catch (MPApiException e) {
             System.out.println("Status: " + e.getApiResponse().getStatusCode());
