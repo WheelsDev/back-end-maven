@@ -1,8 +1,7 @@
 package org.example;
 
-import org.example.Models.Bicicleta;
-import org.example.Models.Cliente;
-import org.example.Models.Contrato;
+import org.example.DataAccessObject.UsuarioDAO;
+import org.example.Models.*;
 import org.example.Util.GerarEmail;
 import org.example.Util.GerarPDF;
 import org.springframework.boot.SpringApplication;
