@@ -43,7 +43,7 @@ public class GerarEmail {
                 "Atenciosamente,\n" +
                 "Wheels LTDA\n" +
                 "Brasil - Rio de Janeiro - Centro\n" +
-                "+55 (21) 99822-8014\n" +
+                "+55 (21) 99822-5741\n" +
                 "wheelsltda@gmail.com\n" +
                 "\n";
 
@@ -95,7 +95,7 @@ public class GerarEmail {
                 "Atenciosamente,\n" +
                 "Wheels LTDA\n" +
                 "Brasil - Rio de Janeiro - Centro\n" +
-                "+55 (21) 99822-8014\n" +
+                "+55 (21) 99822-5741\n" +
                 "wheelsltda@gmail.com\n" +
                 "\n";
         Session session = Session.getInstance(propriedadesEmail(), new Authenticator() {

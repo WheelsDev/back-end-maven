@@ -1,7 +1,14 @@
 package org.example;
 
+import org.example.Models.Bicicleta;
+import org.example.Models.Cliente;
+import org.example.Models.Contrato;
+import org.example.Util.GerarEmail;
+import org.example.Util.GerarPDF;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import java.time.LocalDate;
 
 @SpringBootApplication
 public class Main {

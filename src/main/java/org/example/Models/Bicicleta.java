@@ -15,8 +15,8 @@ public class Bicicleta {
 
     public Bicicleta() {}
 
-    public Bicicleta(String nome, String marca, String modelo, double deposito, String tipo, double diariaTaxaAluguel , boolean disponibilidade) {
-        numero = Integer.parseInt(null);
+    public Bicicleta(int numero, String nome, String marca, String modelo, double deposito, String tipo, double diariaTaxaAluguel , boolean disponibilidade) {
+        this.numero = numero;
         this.nome = nome;
         this.deposito = deposito;
         this.diariaTaxaAluguel = diariaTaxaAluguel;

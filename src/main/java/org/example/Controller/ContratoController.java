@@ -48,6 +48,7 @@ public class ContratoController {
         boolean sucesso = contratoDAO.inserir(contrato);
 
         if (sucesso) {
+
             bicicletaNoBanco.setDisponibilidade(false);
             bicicletaDAO.atualizar(bicicletaNoBanco);
 
