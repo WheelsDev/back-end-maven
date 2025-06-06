@@ -31,7 +31,7 @@ public class MercadoPagoController {
         }
 
         try {
-            String link = mercadoPagoService.criarPagamento(contrato, valorTotal);
+            String link = mercadoPagoService.criarLinkDePagamento(contrato, valorTotal);
             return ResponseEntity.ok(link);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Erro ao gerar link de pagamento: " + e.getMessage());

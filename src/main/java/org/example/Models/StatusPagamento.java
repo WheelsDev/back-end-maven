@@ -1,5 +1,5 @@
 package org.example.Models;
 
 public enum StatusPagamento {
-    PAGO, PENDENTE;
+    PENDENTE, PAGO, RECUSADO, CANCELADO
 }

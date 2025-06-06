@@ -6,6 +6,8 @@ import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
 import com.mercadopago.resources.preference.Preference;
 import org.example.Models.Contrato;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -14,9 +16,21 @@ import java.util.Collections;
 @Service
 public class MercadoPagoService {
 
-    public String criarPagamento(Contrato contrato, double valorTotal) throws MPException, MPApiException {
+    private final String accessToken;
+    private final String appBaseUrl;
+
+    @Autowired
+    public MercadoPagoService(
+            @Value("${mercadopago.access_token.${spring.profiles.active}}") String accessToken,
+            @Value("${app.base-url}") String appBaseUrl
+    ) {
+        this.accessToken = accessToken;
+        this.appBaseUrl = appBaseUrl;
+    }
+
+    public String criarLinkDePagamento(Contrato contrato, double valorTotal) throws MPException, MPApiException {
         try {
-            MercadoPagoConfig.setAccessToken("TEST-4595925158591094-051422-a85e5e1889160da7ff39743525a55095-1980586377");
+            MercadoPagoConfig.setAccessToken(this.accessToken);
 
             PreferenceItemRequest item = PreferenceItemRequest.builder()
                     .title("Pagamento do contrato " + contrato.getIdentificador())
@@ -32,14 +46,9 @@ public class MercadoPagoService {
                     .build();
 
             PreferenceBackUrlsRequest backUrls = PreferenceBackUrlsRequest.builder()
-                    .success("https://seusite.com/pagamento/sucesso")
-                    .failure("https://seusite.com/pagamento/falha")
-                    .pending("https://seusite.com/pagamento/pendente")
-                    .build();
-
-            PreferencePaymentMethodsRequest paymentMethods = PreferencePaymentMethodsRequest.builder()
-                    // Não define defaultPaymentMethodId
-                    // Não exclui nada — permite Pix, Cartão, Boleto, etc.
+                    .success(this.appBaseUrl + "/pagamento/sucesso")
+                    .failure(this.appBaseUrl + "/pagamento/falha")
+                    .pending(this.appBaseUrl + "/pagamento/pendente")
                     .build();
 
             PreferenceRequest preferenceRequest = PreferenceRequest.builder()
@@ -47,8 +56,8 @@ public class MercadoPagoService {
                     .payer(payer)
                     .externalReference(contrato.getIdentificador())
                     .backUrls(backUrls)
-                    .notificationUrl("http://localhost:8080/webhook/mercadopago")
-                    .paymentMethods(paymentMethods)
+                    .notificationUrl(this.appBaseUrl + "/webhook/mercadopago")
+                    .autoReturn("approved")
                     .build();
 
             PreferenceClient client = new PreferenceClient();
@@ -57,11 +66,10 @@ public class MercadoPagoService {
             return preference.getInitPoint();
 
         } catch (MPApiException e) {
-            System.out.println("Status: " + e.getApiResponse().getStatusCode());
-            System.out.println("Content: " + e.getApiResponse().getContent());
+            System.err.println("Erro da API do Mercado Pago: " + e.getApiResponse().getContent());
             throw e;
         } catch (MPException e) {
-            System.out.println("Error MP: " + e.getMessage());
+            System.err.println("Erro do SDK do Mercado Pago: " + e.getMessage());
             throw e;
         }
     }

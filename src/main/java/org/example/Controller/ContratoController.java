@@ -2,11 +2,9 @@ package org.example.Controller;
 
 import org.example.DataAccessObject.BicicletaDAO;
 import org.example.DataAccessObject.ContratoDAO;
+import org.example.DataAccessObject.PagamentoDAO; // Certifique-se de importar PagamentoDAO
 import org.example.Integration.MercadoPagoService;
-import org.example.Models.Bicicleta;
-import org.example.Models.Cliente;
-import org.example.Models.Contrato;
-import org.example.Models.StatusContrato;
+import org.example.Models.*; // Importe Pagamento e StatusPagamento também
 import org.example.Util.GerarEmail;
 import org.example.Util.GerarPDF;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +26,11 @@ import java.util.Map;
 public class ContratoController {
 
     private final ContratoDAO contratoDAO = new ContratoDAO();
+    private final BicicletaDAO bicicletaDAO = new BicicletaDAO();
+    private final PagamentoDAO pagamentoDAO = new PagamentoDAO();
 
     @PostMapping
     public ResponseEntity<String> criarContrato(@RequestBody Contrato contrato) {
-        BicicletaDAO bicicletaDAO = new BicicletaDAO();
         Bicicleta bicicletaNoBanco = bicicletaDAO.buscarPorNumero(contrato.getBicicleta().getNumero());
         GerarPDF gerarPDF = new GerarPDF();
         GerarEmail gerarEmail = new GerarEmail();
@@ -52,12 +51,13 @@ public class ContratoController {
         boolean sucesso = contratoDAO.inserir(contrato);
 
         if (sucesso) {
+
             gerarPDF.gerarContratoAluguel(contrato);
             gerarEmail.enviarContratoDeAluguel(contrato.getCliente(),contrato);
             try {
                 Files.delete(Paths.get("src", "main", "java", "org", "example", "Util", contrato.getIdentificador() + ".pdf"));
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                System.err.println("Falha ao deletar PDF: " + e.getMessage());
             }
             bicicletaNoBanco.setDisponibilidade(false);
             bicicletaDAO.atualizar(bicicletaNoBanco);
@@ -95,73 +95,48 @@ public class ContratoController {
         return ResponseEntity.ok(contratos);
     }
 
-    @Autowired
-    private MercadoPagoService mercadoPagoService;
-
-    public void visualizarContrato () {
-
-    }
-
-    /*@GetMapping("/teste-pagamento")
-    public ResponseEntity<Map<String, Object>> testePagamento() {
+    @PostMapping("/{identificador}/finalizar-dinheiro")
+    public ResponseEntity<String> finalizarContratoPagoEmDinheiro(@PathVariable String identificador) {
+        System.out.println("Controller: Recebida requisição para finalizar contrato (pago em dinheiro): " + identificador);
         try {
-            Cliente clienteTeste = new Cliente(
-                    "João Teste",
-                    "Rua Fictícia, 123",
-                    "(21) 99999-9999",
-                    "joao@teste.com"
-            );
+            Contrato contrato = contratoDAO.buscarPorIdentificador(identificador);
 
-            Bicicleta bicicletaTeste = new Bicicleta(
-                    "Bike Teste",
-                    "Caloi",
-                    "Explorer",
-                    150.0,
-                    "Montanha",
-                    20.0,
-                    true
-            );
+            if (contrato == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Contrato com identificador '" + identificador + "' não encontrado.");
+            }
+            contrato.setStatus(StatusContrato.FINALIZADO);
+            boolean sucessoContrato = contratoDAO.atualizar(contrato);
+            if (!sucessoContrato) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao atualizar status do contrato.");
+            }
+            System.out.println("Controller: Contrato " + identificador + " atualizado para FINALIZADO.");
 
-            Contrato contratoFalso = new Contrato(
+            Bicicleta bicicleta = contrato.getBicicleta();
+            if (bicicleta != null) {
+                bicicleta.setDisponibilidade(true);
+                boolean sucessoBicicleta = bicicletaDAO.atualizar(bicicleta);
+                if (!sucessoBicicleta) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao atualizar disponibilidade da bicicleta.");
+                }
+                System.out.println("Controller: Bicicleta ID " + bicicleta.getNumero() + " (do contrato " + identificador + ") atualizada para disponível.");
+            } else {
+                System.err.println("Controller AVISO: Contrato " + identificador + " não possui bicicleta associada.");
+            }
+            Pagamento pagamento = pagamentoDAO.buscarPorContratoId(contrato.getIdentificador());
+            if (pagamento != null) {
+                pagamento.setStatus(StatusPagamento.PAGO);
+                pagamentoDAO.atualizarStatus(pagamento);
+                System.out.println("Controller: Pagamento do contrato " + identificador + " atualizado para PAGO.");
+            } else {
+                System.err.println("Controller AVISO: Não foi encontrado registro de pagamento para o contrato " + identificador + ". Criando um novo registro PAGO.");
+            }
 
-                    clienteTeste,
-                    bicicletaTeste,
-                    LocalDate.now(),
-                    5
-            );
-
-            double valorTotal = contratoFalso.getNumeroDias() * contratoFalso.getBicicleta().getDiariaTaxaAluguel();
-
-            String paymentUrl = mercadoPagoService.criarPagamento(contratoFalso, valorTotal);
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("identificadorContrato", contratoFalso.getIdentificador());
-            response.put("valorTotal", valorTotal);
-            response.put("cliente", Map.of(
-                    "nome", clienteTeste.getNome(),
-                    "email", clienteTeste.getEmail()
-            ));
-            response.put("bicicleta", Map.of(
-                    "nome", bicicletaTeste.getNome(),
-                    "valorDiaria", bicicletaTeste.getDiariaTaxaAluguel()
-            ));
-            response.put("pagamento", Map.of(
-                    "url", paymentUrl,
-                    "diasAluguel", contratoFalso.getNumeroDias()
-            ));
-
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok("Contrato finalizado (pago em dinheiro) com sucesso.");
 
         } catch (Exception e) {
+            System.err.println("Controller ERRO: Falha ao finalizar contrato (pago em dinheiro) para o identificador: " + identificador);
             e.printStackTrace();
-            Map<String, Object> error = new HashMap<>();
-            error.put("erro", "Erro ao gerar pagamento");
-            error.put("mensagem", e.getMessage());
-            error.put("causa", e.getCause() != null ? e.getCause().getMessage() : "Desconhecida");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno ao finalizar contrato: " + e.getMessage());
         }
-
-    }*/
-
+    }
 }
-
