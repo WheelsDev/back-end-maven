@@ -37,7 +37,7 @@ public class MercadoPagoWebhookController {
                 System.out.println("Webhook: ID do Pagamento recebido: " + paymentId);
 
 
-                MercadoPagoConfig.setAccessToken("APP_USR-6340158991500342-060514-242b29f4159a5cf81ad2413bd182aee2-1980586377");
+                MercadoPagoConfig.setAccessToken("APP_USR-8850650001756543-060700-f3eb85458cb70488d33033901c8098cb-1980586377");
 
                 PaymentClient client = new PaymentClient();
                 Payment payment = client.get(paymentId);

@@ -2,16 +2,15 @@ package org.example.Controller;
 
 import org.example.DataAccessObject.BicicletaDAO;
 import org.example.DataAccessObject.ContratoDAO;
-import org.example.DataAccessObject.PagamentoDAO; // Certifique-se de importar PagamentoDAO
+import org.example.DataAccessObject.PagamentoDAO;
 import org.example.Integration.MercadoPagoService;
-import org.example.Models.*; // Importe Pagamento e StatusPagamento também
+import org.example.Models.*;
 import org.example.Util.GerarEmail;
 import org.example.Util.GerarPDF;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
