@@ -73,8 +73,9 @@ public class ContratoDAO {
     }
 
     public Contrato buscarPorIdentificador(String identificador) {
-        String sql = "SELECT c.*, b.* FROM contratos c " +
+        String sql = "SELECT c.*, b.*, cl.* FROM contratos c " +
                 "JOIN bicicletas b ON c.bicicleta_numero = b.numero " +
+                "JOIN clientes cl ON c.cliente = cl.nome " +
                 "WHERE c.identificador = ?";
 
         try (Connection conn = GerenciadorBancoDados.conectar();
@@ -89,6 +90,9 @@ public class ContratoDAO {
 
                 Cliente cliente = new Cliente();
                 cliente.setNome(rs.getString("cliente"));
+                cliente.setEmail(rs.getString("email"));
+                cliente.setEndereco(rs.getString("endereco"));
+                cliente.setTelefone(rs.getString("telefone"));
                 contrato.setCliente(cliente);
 
                 Bicicleta bicicleta = new Bicicleta();
@@ -145,6 +149,7 @@ public class ContratoDAO {
         }
     }
 
+    //não implementado no front-end
     public boolean deletarPorIdentificador(String identificador) {
         String sql = "DELETE FROM contratos WHERE identificador = ?";
 
@@ -163,8 +168,9 @@ public class ContratoDAO {
 
     public List<Contrato> listarTodos() {
         List<Contrato> contratos = new ArrayList<>();
-        String sql = "SELECT c.*, b.* FROM contratos c " +
-                "JOIN bicicletas b ON c.bicicleta_numero = b.numero";
+        String sql = "SELECT c.*, b.*, cl.* FROM contratos c " +
+                "JOIN bicicletas b ON c.bicicleta_numero = b.numero " +
+                "JOIN clientes cl ON c.cliente = cl.nome";
 
         try (Connection conn = GerenciadorBancoDados.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -176,6 +182,9 @@ public class ContratoDAO {
 
                 Cliente cliente = new Cliente();
                 cliente.setNome(rs.getString("cliente"));
+                cliente.setEmail(rs.getString("email"));
+                cliente.setEndereco(rs.getString("endereco"));
+                cliente.setTelefone(rs.getString("telefone"));
                 contrato.setCliente(cliente);
 
                 Bicicleta bicicleta = new Bicicleta();

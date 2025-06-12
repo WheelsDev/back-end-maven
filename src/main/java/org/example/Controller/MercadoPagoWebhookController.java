@@ -8,6 +8,8 @@ import org.example.DataAccessObject.PagamentoDAO;
 import org.example.DataAccessObject.BicicletaDAO; // Supondo que você tenha este DAO
 import org.example.Integration.MercadoPagoService;
 import org.example.Models.*; // Supondo que Bicicleta esteja neste pacote
+import org.example.Util.GerarEmail;
+import org.example.Util.GerarPDF;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,14 +19,15 @@ import java.util.Map;
 @RestController
 @RequestMapping("/webhook")
 public class MercadoPagoWebhookController {
-
+    private final GerarPDF gerarPDF = new GerarPDF();
+    private final GerarEmail gerarEmail = new GerarEmail();
     private final ContratoDAO contratoDAO = new ContratoDAO();
     private final PagamentoDAO pagamentoDAO = new PagamentoDAO();
     private final BicicletaDAO bicicletaDAO = new BicicletaDAO();
 
     @PostMapping("/mercadopago")
     public ResponseEntity<Void> receberNotificacao(@RequestBody Map<String, Object> payload) {
-        System.out.println("🚨 Webhook recebido:");
+        System.out.println("Webhook recebido:");
         payload.forEach((k, v) -> System.out.println(k + ": " + v));
 
 
@@ -37,7 +40,7 @@ public class MercadoPagoWebhookController {
                 System.out.println("Webhook: ID do Pagamento recebido: " + paymentId);
 
 
-                MercadoPagoConfig.setAccessToken("APP_USR-8850650001756543-060700-f3eb85458cb70488d33033901c8098cb-1980586377");
+                MercadoPagoConfig.setAccessToken("APP_USR-2421671847330837-061114-41589928f405d84bd0eed67fb59dbae4-1980586377");
 
                 PaymentClient client = new PaymentClient();
                 Payment payment = client.get(paymentId);
@@ -69,6 +72,8 @@ public class MercadoPagoWebhookController {
                             if (pagamentoDoContrato != null) {
                                 pagamentoDoContrato.setStatus(StatusPagamento.PAGO);
                                 pagamentoDAO.atualizarStatus(pagamentoDoContrato);
+                                gerarPDF.gerarComprovantePagamento(contrato);
+                                gerarEmail.enviarComprovantePagamento(contrato.getCliente(),contrato);
                                 System.out.println("Webhook: Pagamento associado ao contrato " + contratoId + " atualizado para PAGO.");
                             } else {
                                 System.err.println("Webhook AVISO: Não foi encontrado um registro de pagamento associado ao contrato " + contratoId);

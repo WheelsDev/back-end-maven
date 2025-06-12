@@ -8,9 +8,11 @@ import org.example.Models.*;
 import org.example.Util.GerarEmail;
 import org.example.Util.GerarPDF;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -23,7 +25,8 @@ import java.util.Map;
 @RequestMapping("/api/contratos")
 @CrossOrigin(origins = "http://localhost:3000")
 public class ContratoController {
-
+    private final GerarPDF gerarPDF = new GerarPDF();
+    private final GerarEmail gerarEmail = new GerarEmail();
     private final ContratoDAO contratoDAO = new ContratoDAO();
     private final BicicletaDAO bicicletaDAO = new BicicletaDAO();
     private final PagamentoDAO pagamentoDAO = new PagamentoDAO();
@@ -51,13 +54,16 @@ public class ContratoController {
 
         if (sucesso) {
 
-            gerarPDF.gerarContratoAluguel(contrato);
-            gerarEmail.enviarContratoDeAluguel(contrato.getCliente(),contrato);
-            try {
-                Files.delete(Paths.get("src", "main", "java", "org", "example", "Util", contrato.getIdentificador() + ".pdf"));
-            } catch (Exception e) {
-                System.err.println("Falha ao deletar PDF: " + e.getMessage());
-            }
+            new Thread(() -> {
+                try {
+                    gerarPDF.gerarContratoAluguel(contrato);
+                    gerarEmail.enviarContratoDeAluguel(contrato.getCliente(), contrato);
+                    Files.delete(Paths.get("src", "main", "java", "org", "example", "Util", contrato.getIdentificador() + ".pdf"));
+                } catch (Exception e) {
+                    System.err.println("Falha ao gerar PDF ou enviar e-mail: " + e.getMessage());
+                }
+            }).start();
+
             bicicletaNoBanco.setDisponibilidade(false);
             bicicletaDAO.atualizar(bicicletaNoBanco);
 
@@ -125,6 +131,15 @@ public class ContratoController {
             if (pagamento != null) {
                 pagamento.setStatus(StatusPagamento.PAGO);
                 pagamentoDAO.atualizarStatus(pagamento);
+                new Thread(() -> {
+                    try {
+                        gerarPDF.gerarComprovantePagamento(contrato);
+                        gerarEmail.enviarComprovantePagamento(contrato.getCliente(), contrato);
+                        Files.delete(Paths.get("src", "main", "java", "org", "example", "Util", "CDP-" + contrato.getIdentificador() + ".pdf"));
+                    } catch (Exception e) {
+                        System.err.println("Falha ao gerar PDF ou enviar e-mail: " + e.getMessage());
+                    }
+                }).start();
                 System.out.println("Controller: Pagamento do contrato " + identificador + " atualizado para PAGO.");
             } else {
                 System.err.println("Controller AVISO: Não foi encontrado registro de pagamento para o contrato " + identificador + ". Criando um novo registro PAGO.");
@@ -137,5 +152,36 @@ public class ContratoController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno ao finalizar contrato: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/{identificador}/pdf")
+    public ResponseEntity<byte[]> visualizarContrato(@PathVariable String identificador) throws IOException {
+        ContratoDAO contratoDAO = new ContratoDAO();
+        GerarPDF gerarPDF = new GerarPDF();
+        Contrato contrato = contratoDAO.buscarPorIdentificador(identificador);
+        if (contrato == null) return ResponseEntity.notFound().build();
+
+
+        gerarPDF.gerarContratoAluguel(contrato);
+        String pdfPath = "src/main/java/org/example/Util/" + contrato.getIdentificador() + ".pdf";
+        FileSystemResource resource = new FileSystemResource(Paths.get(pdfPath));
+
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDisposition(ContentDisposition.inline().filename(identificador + ".pdf").build());
+
+
+        byte[] pdfBytes = resource.getInputStream().readAllBytes();
+
+
+        try {
+            Files.delete(Paths.get(pdfPath));
+        } catch (Exception e) {
+            System.err.println("Erro ao deletar PDF: " + e.getMessage());
+        }
+
+
+        return new ResponseEntity<>(pdfBytes, headers, 200);
     }
 }

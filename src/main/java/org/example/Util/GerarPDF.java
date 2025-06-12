@@ -44,7 +44,7 @@ public class GerarPDF {
             String arquivoImagem = "LogoWheels.png";
             Path caminhoImagem = Paths.get("src","main","java","org","example","Resources",arquivoImagem);
             Image logoLoja = Image.getInstance(caminhoImagem.toString());
-            logoLoja.scaleToFit(60, 60);
+            logoLoja.scaleToFit(45, 45);
 
             logoCell.addElement(new Chunk(logoLoja, 0, 0, true));
 
@@ -194,7 +194,7 @@ public class GerarPDF {
             String arquivoImagem = "LogoWheels.png";
             Path caminhoImagem = Paths.get("src","main","java","org","example","Resources",arquivoImagem);
             Image logoLoja = Image.getInstance(caminhoImagem.toString());
-            logoLoja.scaleToFit(80, 80);
+            logoLoja.scaleToFit(60, 60);
 
             logoCell.addElement(new Chunk(logoLoja, 0, 0, true));
 

@@ -25,31 +25,4 @@ public class PagamentoController {
     public List<Pagamento> listarPagamentosParaGrafico() {
         return pagamentoDAO.listarParaGrafico();
     }
-
-    @PostMapping("/finalizar/{identificador}")
-    public ResponseEntity<Void> finalizarPagamento(@PathVariable String identificador) {
-        ContratoDAO contratoDAO = new ContratoDAO();
-        GerarPDF gerarPDF = new GerarPDF();
-        GerarEmail gerarEmail = new GerarEmail();
-        Contrato contrato = contratoDAO.buscarPorIdentificador(identificador);
-        if (contrato == null) return ResponseEntity.notFound().build();
-
-        contrato.setStatus(StatusContrato.FINALIZADO);
-        contratoDAO.atualizar(contrato);
-
-        Pagamento pagamento = pagamentoDAO.buscarPorContratoId(identificador);
-        if (pagamento != null) {
-            pagamento.setStatus(StatusPagamento.PAGO);
-            pagamentoDAO.atualizarStatus(pagamento);
-            gerarPDF.gerarComprovantePagamento(contrato);
-            gerarEmail.enviarComprovantePagamento(contrato.getCliente(),contrato);
-            try {
-                Files.delete(Paths.get("src", "main", "java", "org", "example", "Util", "CDP-" + contrato.getIdentificador() + ".pdf"));
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        return ResponseEntity.ok().build();
-    }
 }

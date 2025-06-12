@@ -27,6 +27,11 @@ public class GerarEmail {
     }
 
     public void enviarContratoDeAluguel(Cliente cliente, Contrato contrato) {
+        if (cliente == null || cliente.getEmail() == null || cliente.getEmail().trim().isEmpty() || cliente.getEmail().equals("não existente")) {
+            System.err.println("Não foi possível enviar o contrato de aluguel: Email do cliente não informado");
+            return;
+        }
+
         String arquivoContrato = contrato.getIdentificador() + ".pdf";
         Path caminhoArquivo = Paths.get("src","main","java","org","example","Util",arquivoContrato);
         String destinatario = cliente.getEmail();
@@ -77,6 +82,11 @@ public class GerarEmail {
     }
 
     public void enviarComprovantePagamento(Cliente cliente, Contrato contrato) {
+        if (cliente == null || cliente.getEmail() == null || cliente.getEmail().trim().isEmpty() || cliente.getEmail().equals("não existente")) {
+            System.err.println("Não foi possível enviar o comprovante de pagamento: Email do cliente não informado");
+            return;
+        }
+
         String arquivoComprovantePagamento = "CDP-" + contrato.getIdentificador() + ".pdf";
         Path caminhoArquivo = Paths.get("src","main","java","org","example","Util",arquivoComprovantePagamento);
         String destinatario = cliente.getEmail();

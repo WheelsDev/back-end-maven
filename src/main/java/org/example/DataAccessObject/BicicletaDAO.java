@@ -118,6 +118,7 @@ public class BicicletaDAO {
         return null;
     }
 
+    //não implementado no front-end
     public boolean deletarPorNumero(int numero) {
         String sql = "DELETE FROM bicicletas WHERE numero = ?";
 

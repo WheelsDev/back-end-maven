@@ -11,13 +11,6 @@ public class Cliente {
 
     public Cliente() {}
 
-    public Cliente(String nome, String endereco, String telefone) {
-        this.nome = nome;
-        this.endereco = endereco;
-        this.telefone = telefone;
-        this.email = "não existente";
-    }
-
     public Cliente(String nome, String endereco, String telefone, String email) {
         this.nome = nome;
         this.endereco = endereco;

@@ -86,6 +86,7 @@ public class ClienteDAO {
         }
     }
 
+    //não implementado no front-end
     public boolean deletarPorNome(String nome) {
         String sql = "DELETE FROM clientes WHERE nome = ?";
         try (Connection conn = GerenciadorBancoDados.conectar();

@@ -17,9 +17,10 @@ public class Main {
         SpringApplication.run(Main.class, args);
         //inicializarUsuarios();
     }
-}
+
     /*public static void inicializarUsuarios() {
         UsuarioDAO usuarioDAO = new UsuarioDAO();
         usuarioDAO.inserir(new Usuario("admin@wheels.com", "admin123", TipoUsuario.ADMIN));
         usuarioDAO.inserir(new Usuario("recep@wheels.com", "recep123", TipoUsuario.RECEPCIONISTA));
     }*/
+}
