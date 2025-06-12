@@ -5,7 +5,6 @@ import org.example.Models.Usuario;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam; // Import this!
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -16,7 +15,7 @@ public class UsuarioController {
     private final UsuarioDAO usuarioDAO = new UsuarioDAO();
 
     @GetMapping("/autenticação")
-    public Usuario autenticar(@RequestParam String email, @RequestParam String senha) {
+    public Usuario autenticar(String email, String senha) {
         return usuarioDAO.autenticarUsuario(email, senha);
     }
 }
