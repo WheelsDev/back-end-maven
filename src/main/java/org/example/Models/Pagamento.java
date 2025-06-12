@@ -41,78 +41,17 @@ public class Pagamento {
         this.status = (pagamentoEmFalta <= 0) ? StatusPagamento.PAGO : StatusPagamento.PENDENTE;
     }
 
-    public void calcularPagamentoTotal() {
-        emitirRecibo();
-    }
-
-    private void emitirRecibo() {
-        String cliente = contrato.getCliente().getNome();
-        String endereco = contrato.getCliente().getEndereco();
-
-        System.out.println("Imprimindo comprovante para: '" + cliente + "' ......");
-        System.out.println("Endereço: " + endereco + "\n");
-
-        System.out.println("Alugando a bicicleta: '" + contrato.getBicicleta().getNome() +
-                "' para " + contrato.getNumeroDias() + " dias\n");
-
-        contrato.getBicicleta().calcularCusto(contrato.getNumeroDias());
-    }
-
-    public void exibirDetalhes() {
-        System.out.println("Nome do Cliente: " + clienteNome);
-        System.out.println("Data do Pagamento: " + dataPagamento.format(formatter));
-        System.out.println("Valor Total: R$ " + valorTotal);
-        System.out.println("Valor pago pelo cliente: R$ " + valorPago);
-        if (status == StatusPagamento.PAGO) {
-            System.out.println("Status: PAGO");
-        } else {
-            System.out.println("Pagamento em falta: R$ " + pagamentoEmFalta);
-        }
-    }
-
-    public Contrato getContrato() {
-        return contrato;
-    }
-
     public void setContrato(Contrato contrato) {
         this.contrato = contrato;
         calcularValores();
-    }
-
-    public double getValorTotal() {
-        return valorTotal;
-    }
-
-    public double getValorPago() {
-        return valorPago;
-    }
-
-    public double getPagamentoEmFalta() {
-        return pagamentoEmFalta;
-    }
-
-    public LocalDate getDataPagamento() {
-        return dataPagamento;
     }
 
     public void setDataPagamento(LocalDate dataPagamento) {
         this.dataPagamento = dataPagamento;
     }
 
-    public StatusPagamento getStatus() {
-        return status;
-    }
-
-    public String getContratoId() {
-        return contratoId;
-    }
-
     public void setContratoId(String contratoId) {
         this.contratoId = contratoId;
-    }
-
-    public String getClienteNome() {
-        return clienteNome;
     }
 
     public void setClienteNome(String clienteNome) {
@@ -134,4 +73,33 @@ public class Pagamento {
     public void setStatus(StatusPagamento status) {
         this.status = status;
     }
+
+    public Contrato getContrato() {
+        return contrato;
+    }
+
+    public double getValorTotal() {
+        return valorTotal;
+    }
+
+    public double getValorPago() {
+        return valorPago;
+    }
+
+    public double getPagamentoEmFalta() {
+        return pagamentoEmFalta;
+    }
+
+    public LocalDate getDataPagamento() {
+        return dataPagamento;
+    }
+
+    public StatusPagamento getStatus() {
+        return status;
+    }
+
+    public String getContratoId() {
+        return contratoId;
+    }
+
 }

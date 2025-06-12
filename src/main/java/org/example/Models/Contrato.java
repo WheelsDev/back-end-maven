@@ -18,7 +18,6 @@ public class Contrato {
     private LocalDate dataRetorno;
     private int numeroDias;
     private double valorDeposito;
-    //private double valorDeposito2 = bicicleta.getDeposito();
     private double taxaAtraso = 0;
     private double taxaDano = 0;
     private StatusContrato status = StatusContrato.ATIVO;
@@ -120,30 +119,5 @@ public class Contrato {
         return "CON-" + new Random().nextInt(10000);
     }
 
-    public void danoCausadoABicicleta() {
-        System.out.println("Dano causado à bicicleta.");
-        double multa = bicicleta.getDeposito()*15;
-        taxaDano = multa;
-    }
-
-    public void atrasoAoDevolverBicicleta() {
-        double multa = 1.20 * (bicicleta.getDiariaTaxaAluguel() * numeroDias);
-        taxaAtraso = multa;
-    }
-
-    public void finalizacaoDoContrato() {
-        status = StatusContrato.FINALIZADO;
-    }
-
-    public void exibirDetalhes() {
-        System.out.println("DETALHES DO CONTRATO");
-        System.out.println("\nIdentificador: " + getIdentificador());
-        System.out.println("Cliente: " + cliente.getNome());
-        System.out.println("Bicicleta: " + bicicleta.getNome());
-        System.out.println("Data do aluguel: " + dataInicial);
-        System.out.println("Números de dias de aluguel: " + numeroDias);
-        System.out.println("Data de retorno da bicicleta: " + dataRetorno);
-        System.out.println("Status do Contrato: " + status);
-    }
 }
 

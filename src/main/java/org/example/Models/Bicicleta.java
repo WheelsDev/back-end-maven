@@ -90,20 +90,4 @@ public class Bicicleta {
         return disponibilidade;
     }
 
-    public void exibirDetalhes() {
-        System.out.println("Número: " + numero);
-        System.out.println("Nome: " + nome);
-        System.out.println("Marca: " + marca);
-        System.out.println("Modelo: " + modelo);
-        System.out.println("Tipo de bicicleta: " + tipo);
-        System.out.println("Depósito: R$ " + deposito);
-        System.out.println("diariaTaxaAluguel: R$ " + diariaTaxaAluguel);
-        System.out.println("Disponibilidade: " + disponibilidade);
-    }
-
-    public void calcularCusto(int numeroDeDias) {
-        double custo = deposito + (diariaTaxaAluguel * numeroDeDias);
-        System.out.println("O total custo para o alguel deve ser: R$ " + custo + "\n");
-    }
-
 }
