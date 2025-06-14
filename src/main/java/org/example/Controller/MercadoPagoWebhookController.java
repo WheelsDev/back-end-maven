@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Map;
 
 @RestController
@@ -40,7 +42,7 @@ public class MercadoPagoWebhookController {
                 System.out.println("Webhook: ID do Pagamento recebido: " + paymentId);
 
 
-                MercadoPagoConfig.setAccessToken("APP_USR-2421671847330837-061114-41589928f405d84bd0eed67fb59dbae4-1980586377");
+                MercadoPagoConfig.setAccessToken("APP_USR-912348619960378-061308-15a7c6333aaa9f6146ad176ad9e03e1b-1980586377");
 
                 PaymentClient client = new PaymentClient();
                 Payment payment = client.get(paymentId);
@@ -73,7 +75,8 @@ public class MercadoPagoWebhookController {
                                 pagamentoDoContrato.setStatus(StatusPagamento.PAGO);
                                 pagamentoDAO.atualizarStatus(pagamentoDoContrato);
                                 gerarPDF.gerarComprovantePagamento(contrato);
-                                gerarEmail.enviarComprovantePagamento(contrato.getCliente(),contrato);
+                                gerarEmail.enviarComprovantePagamento(contrato.getCliente(), contrato);
+                                Files.delete(Paths.get("src", "main", "java", "org", "example", "Util", "CDP-" + contrato.getIdentificador() + ".pdf"));
                                 System.out.println("Webhook: Pagamento associado ao contrato " + contratoId + " atualizado para PAGO.");
                             } else {
                                 System.err.println("Webhook AVISO: Não foi encontrado um registro de pagamento associado ao contrato " + contratoId);

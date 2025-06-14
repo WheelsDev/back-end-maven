@@ -1,0 +1,55 @@
+Como normalmente funciona (padrão do mercado)
+
+1. Depósito como caução / garantia
+
+* O depósito não é cobrado como parte do aluguel.
+* Ele serve como **segurança contra danos, perdas ou atrasos**.
+* Na devolução, se tudo estiver ok, o depósito é reembolsado integralmente.
+* Se houver multas ou danos, o valor é descontado do depósito e o saldo restante é devolvido.
+* Se o custo final for maior que o depósito, o cliente paga a diferença.
+
+Exemplo:
+
+* Depósito: R\$ 200
+* Aluguel: 5 dias × R\$ 20 = R\$ 100
+* Cliente paga inicialmente R\$ 200 (depósito)
+* Na devolução, sem danos: devolve R\$ 200 (depósito) + cobra os R\$ 100 do aluguel (se ainda não pago)
+* Se houver dano de R\$ 50, desconta do depósito:
+
+  * Devolve R\$ 150 do depósito
+  * Cobra R\$ 100 do aluguel
+
+
+2. Depósito incorporado no valor do aluguel (menos comum)
+
+* O depósito é somado ao valor total do aluguel.
+* Cliente paga tudo antes.
+* Na devolução, o depósito é devolvido ou descontado do valor pago.
+* O cliente paga somente a diferença se houver custo extra.
+
+
+O que eu recomendo pra sua loja fictícia:
+
+Modelo 1 (mais simples e realista)
+
+Cliente paga aluguel + depósito na locação.
+Depósito é guardado.
+Na devolução, você calcula multas/danos.
+Depósito é devolvido integralmente ou descontado.
+Cliente só paga a diferença se for maior que o depósito.
+
+
+Exemplo de cálculo
+
+| Item               | Valor (R\$)   |
+| ------------------ | ------------- |
+| Diária da bike     | 20            |
+| Dias alugados      | 5             |
+| Valor aluguel      | 100 (20×5)    |
+| Depósito           | 200           |
+| Pagamento inicial  | 300 (100+200) |
+| Taxa atraso/dano   | 50            |
+| Saldo depósito     | 150 (200-50)  |
+| Cliente paga extra | 0             |
+| Depósito devolvido | 150           |
+

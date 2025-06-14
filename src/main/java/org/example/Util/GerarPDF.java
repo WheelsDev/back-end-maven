@@ -7,6 +7,8 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import jdk.jfr.Timespan;
 import org.example.Models.Contrato;
+import org.example.Models.Pagamento;
+import org.example.DataAccessObject.PagamentoDAO;
 import java.io.FileOutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -166,7 +168,7 @@ public class GerarPDF {
 
             Font fonteMetodosPagamento = new Font(Font.FontFamily.HELVETICA, 12);
             Paragraph metodosPagamento = new Paragraph("\nO pagamento poderá ser realizado via:\n" +
-                    "- Dinheiro\n- PIX\n- Crédito\n- Débito\n- Boleto\n", fonteMetodosPagamento);
+                    "- Dinheiro\n- PIX\n- Crédito\n- Débito", fonteMetodosPagamento);
             document.add(metodosPagamento);
 
             document.close();
@@ -182,6 +184,27 @@ public class GerarPDF {
         try {
             PdfWriter.getInstance(document, new FileOutputStream(caminhoArquivo.toFile()));
             document.open();
+
+            // Get the actual payment values
+            PagamentoDAO pagamentoDAO = new PagamentoDAO();
+            Pagamento pagamento = pagamentoDAO.buscarPorContratoId(contrato.getIdentificador());
+            
+            if (pagamento == null) {
+                throw new RuntimeException("Pagamento não encontrado para o contrato " + contrato.getIdentificador());
+            }
+
+            double valorDiaria = contrato.getBicicleta().getDiariaTaxaAluguel() * contrato.getNumeroDias();
+            double deposito = contrato.getBicicleta().getDeposito();
+            double valorAluguel = valorDiaria + deposito;
+            long diasDeDiferenca = ChronoUnit.DAYS.between(contrato.getDataInicial(), contrato.getDataRetorno());
+            long diasDeAtraso = 0;
+            if (diasDeDiferenca > contrato.getNumeroDias()) diasDeAtraso = diasDeDiferenca - contrato.getNumeroDias();
+            double taxaAtraso = contrato.getBicicleta().getDiariaTaxaAluguel() + (contrato.getBicicleta().getDiariaTaxaAluguel()/2);
+            double taxaAtrasoTotal = taxaAtraso * diasDeAtraso;
+            double taxaDano = contrato.getTaxaDano();
+            double total = pagamento.getValorTotal(); // Use the actual total from payment
+            double devolver = deposito - (taxaAtrasoTotal + taxaDano);
+            if (devolver < 0) devolver = 0;
 
             PdfPTable headerTable = new PdfPTable(3);
             headerTable.setWidthPercentage(100);
@@ -272,28 +295,6 @@ public class GerarPDF {
 
             document.add(mainTable);
 
-            double valorDiaria = contrato.getBicicleta().getDiariaTaxaAluguel() * contrato.getNumeroDias();
-            double deposito = contrato.getBicicleta().getDeposito();
-            double valorAluguel = valorDiaria + deposito;
-            long diasDeDiferenca = ChronoUnit.DAYS.between(contrato.getDataInicial(), contrato.getDataRetorno());
-            long diasDeAtraso = 0;
-            if (diasDeDiferenca > contrato.getNumeroDias()) diasDeAtraso = diasDeDiferenca - contrato.getNumeroDias();
-            double taxaAtraso = contrato.getBicicleta().getDiariaTaxaAluguel() + (contrato.getBicicleta().getDiariaTaxaAluguel()/2);
-            double taxaAtrasoTotal = taxaAtraso * diasDeAtraso;
-            double taxaDano = contrato.getTaxaDano();
-            double total = valorDiaria + deposito + taxaAtrasoTotal + taxaDano;
-            double devolver = deposito - (taxaAtrasoTotal + taxaDano);
-            if (devolver < 0) devolver = 0;
-
-            Paragraph textoEspaco = new Paragraph("\n");
-            document.add(textoEspaco);
-            linha.setLineColor(corLaranja);
-            linha.setLineWidth(3);
-            document.add(linhaLaranja);
-
-            document.add(textoEspaco);
-            document.add(textoEspaco);
-
             PdfPTable tabelaDescricaoPrecoValor = new PdfPTable(3);
             tabelaDescricaoPrecoValor.setWidthPercentage(100);
             tabelaDescricaoPrecoValor.setWidths(new float[]{40, 40, 20});
@@ -335,6 +336,13 @@ public class GerarPDF {
 
             document.add(tabelaDescricaoPrecoValor);
 
+            Paragraph textoEspaco = new Paragraph("\n");
+            document.add(textoEspaco);
+            linha.setLineColor(corLaranja);
+            linha.setLineWidth(3);
+            document.add(linhaLaranja);
+
+            document.add(textoEspaco);
             document.add(textoEspaco);
 
             Paragraph metodoPagamento = new Paragraph("Método de pagamento: Pix",fonteNegrito);
