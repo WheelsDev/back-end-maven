@@ -1,7 +1,3 @@
-Claro! Aqui está a versão aprimorada da sua descrição com a inclusão das APIs utilizadas:
-
----
-
 # back-end-maven
 
 **Sistema de Gerenciamento de Aluguéis – Wheels**
