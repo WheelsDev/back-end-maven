@@ -1,33 +1,43 @@
+Claro! Aqui está a versão aprimorada da sua descrição com a inclusão das APIs utilizadas:
+
+---
+
 # back-end-maven
 
-Sistema de Gerenciamento de Aluguéis – Wheels
+**Sistema de Gerenciamento de Aluguéis – Wheels**
 
-# Descrição do projeto
-O projeto propõe a evolução de um sistema já existente para controle de aluguéis de bicicletas da loja Wheels. A proposta é tornar o processo de gestão de clientes, bicicletas e 
-históricos de aluguel mais eficiente e organizado, reduzindo falhas manuais e centralizando informações em um sistema integrado.
+## 📋 Descrição do Projeto
 
-# Principais melhorias
-- Substituição do armazenamento local por banco de dados relacional (SQLite).  
-- Desenvolvimento de interface gráfica web utilizando React, HTML5, CSS3 e JavaScript.  
-- Implementação de chatbot interno para consultas rápidas de dados.  
-- Validação de campos de entrada para evitar inconsistências no cadastro.  
-- Funcionalidade de histórico de aluguéis vinculados a cada cliente.
+O projeto propõe a evolução de um sistema já existente para controle de aluguéis de bicicletas da loja Wheels. A proposta é tornar o processo de gestão de clientes, bicicletas e históricos de aluguel mais eficiente e organizado, reduzindo falhas manuais e centralizando informações em um sistema integrado.
 
-# Tecnologias utilizadas
-- Java 17 + Maven (backend)  
-- SQLite (persistência de dados)  
-- HTML5 + CSS3 + JavaScript + React (frontend)  
-- UML para documentação técnica: Casos de Uso, Diagrama de Classes, Diagrama de Sequência, Dicionário de Dados, Matriz de Associação.
+## 🚀 Principais Melhorias
 
-# Estrutura geral do sistema
-- **Frontend:** Interface cadastro, consulta de bicicletas disponíveis e registro de aluguel.  
-- **Backend:** APIs em Java responsáveis por gerenciar os dados de usuários, bicicletas e aluguéis.  
-- **Banco de Dados:** Estrutura simples em SQLite para armazenar usuários, bicicletas e histórico de locações.  
-- **Chatbot:** Interface simples para resposta rápida a comandos básicos de consulta.
+* Substituição do armazenamento local por banco de dados relacional (SQLite).
+* Desenvolvimento de interface gráfica web utilizando React, HTML5, CSS3 e JavaScript.
+* Validação de campos de entrada para evitar inconsistências no cadastro.
+* Cadastro rápido de novos clientes, bicicletas e contratos.
+* Monitoramento de contratos ativos e finalizados.
+* **Integração com a API ViaCEP** para preenchimento automático de endereço ao cadastrar um cliente.
+* **Integração com a API do Mercado Pago** para realização de pagamentos reais via **Pix, cartões de crédito/débito ou boleto bancário**.
 
-# Status
-Desenvolvimento em andamento.  
-Atualmente na fase de finalização da modelagem UML e início do backend.
+## 💻 Tecnologias Utilizadas
 
-# Requisitos básicos para execução
-- JDK 17+  
+* Java 17 + Maven (backend)
+* SQLite (persistência de dados)
+* HTML5 + CSS3 + JavaScript + React (frontend)
+* Integrações com APIs externas: ViaCEP e Mercado Pago
+* UML para documentação técnica: Casos de Uso, Diagrama de Classes, Diagrama de Sequência, Diagrama de Pacotes, Dicionário de Dados e Matriz de Associação.
+
+## Estrutura Geral do Sistema
+
+* **Frontend:** Interface para cadastro, consulta de bicicletas disponíveis e registro de aluguéis.
+* **Backend:** APIs em Java responsáveis por gerenciar os dados de clientes, bicicletas e contratos de aluguel.
+* **Banco de Dados:** Estrutura em SQLite para armazenar clientes, bicicletas e histórico de locações.
+
+## Status
+
+**FINALIZADO POR HORA.**
+
+## Requisitos Básicos para Execução
+
+* JDK 17+
